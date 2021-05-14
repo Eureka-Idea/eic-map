@@ -1,7 +1,8 @@
 {
-  "name": "zoomablegroup",
+  "name": "eic-map",
   "version": "1.0.0",
-  "description": "Simple example of a zoom/pan enabled world map with react-simple-maps.",
+  "description": "Map of EIC members and projects.",
+  "author": "Josh Maas-Howard",
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {

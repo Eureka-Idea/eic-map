@@ -3,8 +3,8 @@ import {
   ComposableMap,
   Geographies,
   Geography,
-  ZoomableGroup,
-  Marker
+  // ZoomableGroup,
+  Marker,
 } from "react-simple-maps";
 
 const geoUrl =
@@ -58,14 +58,14 @@ const MapChart = () => {
   const { primary: primaryColor, secondary: secondaryColor } = colors;
   return (
     <div>
-      <h2>
+      {/* <h2>
         {headerText}
         <br />
         <label className="switch">
           <input onChange={toggleMode} type="checkbox" />
           <span className="slider round"></span>
         </label>
-      </h2>
+      </h2> */}
       {poppedUp && (
         <div className="popup">
           <span onClick={setPoppedUp.bind(this, null)} className="close">
