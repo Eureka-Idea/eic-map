@@ -47,7 +47,8 @@ const modeData = {
   }
 };
 
-const MapChart = () => {
+const MapChart = ({ members }) => {
+  console.log("members: ", members);
   const [poppedUp, setPoppedUp] = React.useState(null);
   const [mode, setMode] = React.useState("consultants");
   const toggleMode = (e) => {

@@ -5,6 +5,9 @@ import "./styles.css";
 
 import MapChart from "./MapChart";
 
+// format of col nicknames
+const regexpNickname = /(col_\w+)/;
+
 function App() {
   const [members, setMembers] = useState([]);;
   useEffect(() => {
@@ -14,8 +17,28 @@ function App() {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
-        setMembers(data)  
+        const members = data.records.map((r) => {
+          const memObj = { id: r.id };
+
+          Object.keys(r.fields).forEach((field) => {
+            const val = r.fields[field];
+            const nicknameMatch = field.match(regexpNickname);
+
+            if (nicknameMatch && nicknameMatch[0]) {
+              const nickname = nicknameMatch[0];
+              memObj[nickname] = val;
+            } else {
+              const standardizedField = field
+                .toLowerCase()
+                .replaceAll(" ", "_");
+              memObj[standardizedField] = val;
+            }
+          });
+
+          return memObj;
+        });
+
+        setMembers(members);
       });
   }, []);;
 
