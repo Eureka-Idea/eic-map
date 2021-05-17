@@ -3,7 +3,7 @@ import {
   ComposableMap,
   Geographies,
   Geography,
-  // ZoomableGroup,
+  ZoomableGroup,
   Marker,
 } from "react-simple-maps";
 
@@ -15,36 +15,16 @@ const modeData = {
     headerText: "EIC Consultants",
     colors: {
       primary: "#1b63c1e3",
-      secondary: "#5a87c126"
+      secondary: "#5a87c126",
     },
-    markers: [
-      { markerOffset: 15, name: "Brad", coordinates: [-74.0721, 44.711] },
-      { markerOffset: 15, name: "Asha", coordinates: [78.4678, 18.07] },
-      { markerOffset: 15, name: "Esther", coordinates: [48.1551, 6.8013] },
-      { markerOffset: 15, name: "Miguel", coordinates: [-49.5739, -25.2637] },
-      { markerOffset: 15, name: "Esi", coordinates: [25.2038, 15.852] },
-      { markerOffset: 15, name: "Ana", coordinates: [11.9036, 42.4806] },
-      { markerOffset: 15, name: "Leo", coordinates: [-87.0428, 15.0464] }
-    ]
   },
   projects: {
     headerText: "EIC Projects",
     colors: {
       primary: "#149E6Ae3",
-      secondary: "#58998026"
+      secondary: "#58998026",
     },
-    markers: [
-      { markerOffset: 15, name: "FIND AGRDT", coordinates: [108.4678, 38.07] },
-      { markerOffset: 15, name: "WHO HTS", coordinates: [8.1551, 16.8013] },
-      {
-        markerOffset: 15,
-        name: "TB Diagnostics",
-        coordinates: [-69.5739, 5.2637]
-      },
-      { markerOffset: 15, name: "FIND AMR", coordinates: [25.2038, -28.852] },
-      { markerOffset: 15, name: "PSI HIVST", coordinates: [1.9036, 44.4806] }
-    ]
-  }
+  },
 };
 
 const MapChart = ({ members }) => {
@@ -55,8 +35,19 @@ const MapChart = ({ members }) => {
     setMode(e.target.checked ? "projects" : "consultants");
   };
 
-  const { headerText, colors, markers } = modeData[mode];
+  const { headerText, colors } = modeData[mode];
   const { primary: primaryColor, secondary: secondaryColor } = colors;
+
+  const markers = members
+    .filter((m) => m.latitude && m.longitude)
+    .map((m) => {
+      const { name, latitude, longitude } = m;
+      return {
+        name,
+        coordinates: [longitude, latitude],
+        markerOffset: 15,
+      };
+    });
   return (
     <div>
       {/* <h2>
@@ -76,46 +67,77 @@ const MapChart = ({ members }) => {
         </div>
       )}
       <ComposableMap>
-        {/* <ZoomableGroup zoom={1}> */}
-        <Geographies geography={geoUrl}>
-          {({ geographies }) =>
-            geographies.map((geo) => (
-              <Geography
-                fill={secondaryColor}
-                stroke="#D6D6DA"
-                key={geo.rsmKey}
-                geography={geo}
-              />
-            ))
-          }
-        </Geographies>
-        {markers.map(({ name, coordinates, markerOffset }) => (
-          <Marker
-            key={name}
-            coordinates={coordinates}
-            onClick={setPoppedUp.bind(this, { name })}
-          >
-            <g
-              fill={secondaryColor}
-              stroke={primaryColor}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              transform="translate(-12, -24)"
+        <ZoomableGroup zoom={1}>
+          <Geographies geography={geoUrl}>
+            {({ geographies }) =>
+              geographies.map((geo) => (
+                <Geography
+                  fill={secondaryColor}
+                  stroke="#D6D6DA"
+                  key={geo.rsmKey}
+                  geography={geo}
+                />
+              ))
+            }
+          </Geographies>
+          {markers.map(({ name, coordinates, markerOffset }) => (
+            <Marker
+              key={name}
+              coordinates={coordinates}
+              onClick={setPoppedUp.bind(this, { name })}
             >
-              <circle cx="12" cy="10" r="3" />
-              <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
-            </g>
-            <text
+              <svg
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="xMidYMid meet"
+                viewBox="114.64145469651561 105.6206896551725 34.3723384069327 71.72390017464997"
+                width="15"
+                height="34"
+                // width="30.37"
+                // height="67.72"
+                transform="translate(0,-32) rotate(0)"
+              >
+                <path
+                  d="M146.01 120.22C146.01 127.73 139.92 133.82 132.41 133.82C124.91 133.82 118.81 127.73 118.81 120.22C118.81 112.71 124.91 106.62 132.41 106.62C139.92 106.62 146.01 112.71 146.01 120.22Z"
+                  id="b1Fhkr3tey"
+                  stroke="#002c42"
+                  stroke-opacity="1"
+                  fill="007fbf"
+                  fill-opacity=".5"
+                ></path>
+                <path
+                  d="M128.55 133.63L115.64 174.34"
+                  id="c6qSmQu0O"
+                  stroke="#002c42"
+                  stroke-width="1"
+                  stroke-opacity="1"
+                ></path>
+              </svg>
+              {/* <text
               textAnchor="middle"
               y={markerOffset}
               style={{ fontFamily: "system-ui", fill: "#5D5A6D" }}
             >
               {name}
-            </text>
-          </Marker>
-        ))}
-        {/* </ZoomableGroup> */}
+            </text> */}
+                          <svg
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="xMidYMid meet"
+                // viewBox="114.64145469651561 105.6206896551725 34.3723384069327 71.72390017464997"
+                // width="15"
+                // height="34"
+                // width="30.37"
+                // height="67.72"
+                // transform="translate(1,-34) rotate(0)"
+              >
+              <g>
+                <circle cx="5" cy="5" r="1" />
+              </g>
+              </svg>
+            </Marker>
+          ))}
+        </ZoomableGroup>
       </ComposableMap>
     </div>
   );
