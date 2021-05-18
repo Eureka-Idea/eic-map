@@ -15,8 +15,11 @@ const modeData = {
   consultants: {
     headerText: "EIC Consultants",
     colors: {
-      primary: "#1b63c1e3",
-      secondary: "#5a87c126",
+      primary: "#1b63c188",
+      secondary: "#5a87c144",
+      outline: "#00000016",
+      // primary: "#1b63c1e3",
+      // secondary: "#5a87c126",
     },
   },
   projects: {
@@ -24,6 +27,7 @@ const modeData = {
     colors: {
       primary: "#149E6Ae3",
       secondary: "#58998026",
+      outline: "#00000016",
     },
   },
 };
@@ -341,7 +345,6 @@ const MapChart = ({ members, setTooltipContent }) => {
   };
 
   const { headerText, colors } = modeData[mode];
-  const { primary: primaryColor, secondary: secondaryColor } = colors;
 
   const Markers = useMemo(
     () => members
@@ -430,10 +433,25 @@ const MapChart = ({ members, setTooltipContent }) => {
             {({ geographies }) =>
               geographies.map((geo) => (
                 <Geography
-                  fill={secondaryColor}
-                  stroke="#D6D6DA"
+                  fill={colors.secondary}
+                  stroke={colors.outline}
+                  strokeWidth="1"
                   key={geo.rsmKey}
                   geography={geo}
+                  onMouseEnter={(e) => {
+                    e.target.setAttribute("fill", colors.primary);
+                    // e.target.setAttribute("fill", "#5a87c1");
+                    // console.log("E: ", e);
+                    // console.log("GEO: ", geo);
+                    setTooltipContent(geo.properties.NAME);
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.setAttribute("fill", colors.secondary);
+                    // e.target.setAttribute("fill", "#5a87c1");
+                    // console.log("E: ", e);
+                    // console.log("GEO: ", geo);
+                    setTooltipContent("");
+                  }}
                 />
               ))
             }
