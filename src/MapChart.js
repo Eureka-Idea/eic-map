@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
   ComposableMap,
   Geographies,
@@ -6,6 +6,7 @@ import {
   ZoomableGroup,
   Marker,
 } from "react-simple-maps";
+import _ from "lodash";
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -27,7 +28,7 @@ const modeData = {
   },
 };
 
-const PIN_COLORS = [
+const PIN_COLORS = _.uniq([
   "#63b598",
   "#ce7d78",
   "#ea9e70",
@@ -136,7 +137,6 @@ const PIN_COLORS = [
   "#1bb699",
   "#6b2e5f",
   "#64820f",
-  "#1c271",
   "#21538e",
   "#89d534",
   "#d36647",
@@ -308,10 +308,12 @@ const PIN_COLORS = [
   "#07d7f6",
   "#dce77a",
   "#77ecca",
-];
+]);
 
-const PIN_WIDTH = 15;
-const PIN_HEIGHT = 34;
+const PIN_FILL_OPACITY = 1;
+const PIN_STROKE_OPACITY = 0.3;
+const PIN_WIDTH = 10;
+const PIN_HEIGHT = 22;
 // degrees per notch
 const ROTATION_MAGNITUDE = 15;
 // to calc X offset as a result of rotation
@@ -326,11 +328,11 @@ const getTransform = (rotation) => {
     Math.abs(extent * PIN_HEIGHT * ROTATION_Y_CONSTANT) - PIN_HEIGHT * 0.94;
 
   const trans = `translate(${transX}, ${transY}) rotate(${rotation})`;
-  console.log(trans);
+  // console.log(trans);
   return trans;
 };
 
-const MapChart = ({ members }) => {
+const MapChart = ({ members, setTooltipContent }) => {
   console.log("members: ", members);
   const [poppedUp, setPoppedUp] = React.useState(null);
   const [mode, setMode] = React.useState("consultants");
@@ -341,16 +343,69 @@ const MapChart = ({ members }) => {
   const { headerText, colors } = modeData[mode];
   const { primary: primaryColor, secondary: secondaryColor } = colors;
 
-  const markers = members
-    .filter((m) => m.latitude && m.longitude)
-    .map((m) => {
-      const { name, latitude, longitude, col_rotation = 0 } = m;
-      return {
-        name,
-        coordinates: [longitude, latitude],
-        rotation: col_rotation * ROTATION_MAGNITUDE,
-      };
-    });
+  const Markers = useMemo(
+    () => members
+      .filter((m) => m.latitude && m.longitude)
+      .sort((m1, m2) => m2.latitude - m1.latitude) // so shafts appear under heads
+      .map((m, i) => {
+        const { name, latitude, longitude, col_rotation = 0 } = m;
+        if (!i) console.log("RUNNING MEMOIZED MEMBER CREATION")
+        return (
+          <Marker
+            key={name}
+            coordinates={[longitude, latitude]}
+            onClick={setPoppedUp.bind(this, { name })}
+            onMouseEnter={(e) => {
+              // e.target.parentElement.firstChild.setAttribute("fill-opacity", 1);
+              // e.target.parentElement.firstChild.setAttribute("stroke-opacity", 1);
+              setTooltipContent(name);
+            }}
+            onMouseLeave={(e) => {
+              // e.target.parentElement.firstChild.setAttribute("fill-opacity", PIN_FILL_OPACITY);
+              // e.target.parentElement.firstChild.setAttribute("stroke-opacity", PIN_STROKE_OPACITY);
+              setTooltipContent("");
+            }}
+          >
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid meet"
+              viewBox="114.64145469651561 105.6206896551725 34.3723384069327 71.72390017464997"
+              width={PIN_WIDTH}
+              height={PIN_HEIGHT}
+              // width="30.37"
+              // height="67.72"
+              transform={getTransform(col_rotation * ROTATION_MAGNITUDE)}
+            >
+              <path
+                d="M146.01 120.22C146.01 127.73 139.92 133.82 132.41 133.82C124.91 133.82 118.81 127.73 118.81 120.22C118.81 112.71 124.91 106.62 132.41 106.62C139.92 106.62 146.01 112.71 146.01 120.22Z"
+                className="pin-head"
+                stroke="#000000"
+                strokeOpacity={PIN_STROKE_OPACITY}
+                fill={PIN_COLORS[i]}
+                fillOpacity={PIN_FILL_OPACITY}
+              ></path>
+              <path
+                d="M128.55 133.63L115.64 174.34"
+                className="pin-shaft"
+                stroke="#000000"
+                strokeWidth="1"
+                strokeOpacity=".6"
+              ></path>
+            </svg>
+            {/* <text
+            textAnchor="middle"
+            y={markerOffset}
+            style={{ fontFamily: "system-ui", fill: "#5D5A6D" }}
+          >
+            {name}
+          </text> */}
+          </Marker>
+        );
+    }),
+    [members, setTooltipContent]
+  ) 
+
   return (
     <div>
       {/* <h2>
@@ -369,7 +424,7 @@ const MapChart = ({ members }) => {
           Information about {poppedUp.name}
         </div>
       )}
-      <ComposableMap>
+      <ComposableMap data-tip="">
         <ZoomableGroup zoom={1}>
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
@@ -383,49 +438,7 @@ const MapChart = ({ members }) => {
               ))
             }
           </Geographies>
-          {markers.map(({ name, coordinates, rotation }, i) => (
-            <Marker
-              key={name}
-              coordinates={coordinates}
-              onClick={setPoppedUp.bind(this, { name })}
-            >
-              <svg
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="xMidYMid meet"
-                viewBox="114.64145469651561 105.6206896551725 34.3723384069327 71.72390017464997"
-                width={PIN_WIDTH}
-                height={PIN_HEIGHT}
-                // width="30.37"
-                // height="67.72"
-                transform={getTransform(rotation)}
-              >
-                <path
-                  d="M146.01 120.22C146.01 127.73 139.92 133.82 132.41 133.82C124.91 133.82 118.81 127.73 118.81 120.22C118.81 112.71 124.91 106.62 132.41 106.62C139.92 106.62 146.01 112.71 146.01 120.22Z"
-                  id="b1Fhkr3tey"
-                  stroke="#002c42"
-                  stroke-opacity="1"
-                  fill={PIN_COLORS[i]}
-                  fill-opacity=".3"
-                ></path>
-                <path
-                  d="M128.55 133.63L115.64 174.34"
-                  id="c6qSmQu0O"
-                  stroke="#002c42"
-                  stroke-width="1"
-                  stroke-opacity="1"
-                ></path>
-              </svg>
-              {/* <text
-                textAnchor="middle"
-                y={markerOffset}
-                style={{ fontFamily: "system-ui", fill: "#5D5A6D" }}
-              >
-                {name}
-              </text> */}
-            </Marker>
-            )
-          )}
+          {Markers}
         </ZoomableGroup>
       </ComposableMap>
       <div>
@@ -436,7 +449,11 @@ const MapChart = ({ members }) => {
             height: 30,
             display: "inline-block",
           };
-          return <span style={style}>{color}</span>;
+          return (
+            <span key={color} style={style}>
+              {color}
+            </span>
+          );
         })}
       </div>
     </div>

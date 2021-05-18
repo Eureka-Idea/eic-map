@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import "./styles.css";
 
 import MapChart from "./MapChart";
+import ReactTooltip from "react-tooltip";
 
 // format of col nicknames
 const regexpNickname = /(col_\w+)/;
@@ -39,12 +40,16 @@ function App() {
         });
 
         setMembers(members);
+        console.log("RUNNING MEMBER READ");
       });
   }, []);;
 
+  const [tooltipContent, setTooltipContent] = useState("");
+
   return (
     <div>
-      <MapChart members={members} />
+      <ReactTooltip>{tooltipContent}</ReactTooltip>
+      <MapChart members={members} setTooltipContent={setTooltipContent} />
     </div>
   );
 }
