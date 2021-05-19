@@ -5,6 +5,7 @@ import "./styles.css";
 
 import MapChart from "./MapChart";
 import ReactTooltip from "react-tooltip";
+import MemberDetails from "./MemberDetails";
 
 // format of col nicknames
 const regexpNickname = /(col_\w+)/;
@@ -12,6 +13,7 @@ const regexpNickname = /(col_\w+)/;
 function App() {
   const [members, setMembers] = useState([]);;
   useEffect(() => {
+    console.log("FETCHING MEMBER DATA");
     fetch(
       // read-only key
       "https://api.airtable.com/v0/appElHJfSTDnbbrr7/Gallery?api_key=keyFRBqnIvAd1gkXG"
@@ -40,16 +42,31 @@ function App() {
         });
 
         setMembers(members);
-        console.log("RUNNING MEMBER READ");
       });
   }, []);;
 
   const [tooltipContent, setTooltipContent] = useState("");
 
+  const [selectedMember, setSelectedMember] = useState(null);
+  const selectMemberHandler = (m) => {
+    setSelectedMember(m);
+  };
+  const unselectMemberHandler = () => {
+    setSelectedMember(null);
+  };
+  
   return (
     <div>
+      <MemberDetails
+        selectedMember={selectedMember}
+        unselectMemberHandler={unselectMemberHandler}     
+      />
       <ReactTooltip>{tooltipContent}</ReactTooltip>
-      <MapChart members={members} setTooltipContent={setTooltipContent} />
+      <MapChart
+        members={members}
+        setSelectedMember={selectMemberHandler}
+        setTooltipContent={setTooltipContent}
+      />
     </div>
   );
 }
