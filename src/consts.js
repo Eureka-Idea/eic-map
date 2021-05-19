@@ -33,36 +33,31 @@ export const PIN_WIDTH = 8;
 export const PIN_HEIGHT = 20;
 export const PIN_HEAD_SCALE = .87;
 
-// default degrees tilt
-export const ROTATION_DEFAULT = 7;
-// range of added randomness (in degrees)
-export const RANDOMNESS_SPREAD = 8;
-// degrees per notch
-export const ROTATION_MAGNITUDE = 15;
-// to calc X offset as a result of rotation
-export const ROTATION_X_CONSTANT = 3.1;
-export const SHIFT_X_CONSTANT = -2;
-// to calc Y offset as a result of rotation
-export const ROTATION_Y_CONSTANT = 1.5;
-export const SHIFT_Y_CONSTANT = 10;
+const degToRad = (d) => (d * Math.PI) / 180;
+const radToDeg = (r) => (r * 180) / Math.PI;
+
+// default tilt
+export const ROTATION_DEFAULT = degToRad(13);
+// range of added randomness
+export const RANDOMNESS_SPREAD = degToRad(10);
+
+// radians per multiple
+export const ROTATION_MAGNITUDE = Math.PI / 7;
 
 export const getTransform = (rotationMultiple) => {
-  // let pinRotation = 0;
   let pinRotation = ROTATION_DEFAULT;
   pinRotation += RANDOMNESS_SPREAD * (Math.random() - 0.5);
   pinRotation += rotationMultiple * ROTATION_MAGNITUDE;
 
-  const extent = pinRotation / 180;
-  let transX = extent * PIN_HEIGHT * ROTATION_X_CONSTANT;
-  transX += extent * SHIFT_X_CONSTANT - PIN_WIDTH / 2;
+  const transX =
+    Math.sin(pinRotation) * PIN_HEIGHT -
+    (Math.cos(pinRotation) * PIN_WIDTH) / 2;
+  const transY =
+    -Math.cos(pinRotation) * PIN_HEIGHT -
+    (Math.sin(pinRotation) * PIN_WIDTH) / 2;
 
-  let transY = Math.abs(extent * PIN_HEIGHT * ROTATION_Y_CONSTANT);
-  transY -= (extent * PIN_HEIGHT * ROTATION_Y_CONSTANT) / 2;
-  transY -= Math.abs(extent * SHIFT_Y_CONSTANT) 
-  transY -= .8;
-  transY -= PIN_HEIGHT;
-
-  const trans = `translate(${transX}, ${transY}) rotate(${pinRotation})`;
+  const degRotation = radToDeg(pinRotation);
+  const trans = `translate(${transX}, ${transY}) rotate(${degRotation})`;
   return trans;
 };
 
