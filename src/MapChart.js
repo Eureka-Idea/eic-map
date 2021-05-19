@@ -16,6 +16,7 @@ import {
   PIN_STROKE_WIDTH,
   PIN_WIDTH,
   PIN_HEIGHT,
+  PIN_HEAD_SCALE,
   ROTATION_MAGNITUDE,
   getTransform,
 } from "./consts";
@@ -53,22 +54,12 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
               setTooltipContent("");
             }}
           >
-            <circle cx="0" cy="0" r=".4"></circle>
+            {/* reference point: */}
+            {/* <circle cx="0" cy="0" r=".4"></circle> */}
             <g transform={getTransform(col_rotation)}>
-              <circle
-                cx={PIN_WIDTH / 2}
-                cy={PIN_WIDTH / 2}
-                r={PIN_WIDTH / 2}
-                className="pin-head"
-                stroke={PIN_STROKE}
-                strokeOpacity={PIN_STROKE_OPACITY}
-                strokeWidth={PIN_STROKE_WIDTH}
-                fill={PIN_COLORS[i]}
-                fillOpacity={PIN_FILL_OPACITY}
-              />
               <line
                 x1={PIN_WIDTH / 2}
-                y1={PIN_WIDTH}
+                y1={PIN_WIDTH / 2}
                 x2={PIN_WIDTH / 2}
                 y2={PIN_HEIGHT}
                 className="pin-shaft"
@@ -76,12 +67,23 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
                 strokeWidth={PIN_STROKE_WIDTH}
                 strokeOpacity={PIN_STROKE_OPACITY}
               />
+              <circle
+                cx={PIN_WIDTH / 2}
+                cy={PIN_WIDTH / 2}
+                r={(PIN_WIDTH / 2) * PIN_HEAD_SCALE}
+                className="pin-head"
+                stroke={PIN_STROKE}
+                strokeOpacity={PIN_STROKE_OPACITY}
+                strokeWidth={PIN_STROKE_WIDTH}
+                fill={PIN_COLORS[i]}
+                fillOpacity={PIN_FILL_OPACITY}
+              />
             </g>
           </Marker>
         );
-    }),
+      }),
     [members, setTooltipContent]
-  ) 
+    ) 
 
   return (
     <>
