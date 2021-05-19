@@ -11,7 +11,9 @@ import {
   MODE_DATA,
   PIN_COLORS,
   PIN_FILL_OPACITY,
+  PIN_STROKE,
   PIN_STROKE_OPACITY,
+  PIN_STROKE_WIDTH,
   PIN_WIDTH,
   PIN_HEIGHT,
   ROTATION_MAGNITUDE,
@@ -51,40 +53,30 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
               setTooltipContent("");
             }}
           >
-            <svg
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid meet"
-              viewBox="114.64145469651561 105.6206896551725 34.3723384069327 71.72390017464997"
-              width={PIN_WIDTH}
-              height={PIN_HEIGHT}
-              // width="30.37"
-              // height="67.72"
-              transform={getTransform(col_rotation * ROTATION_MAGNITUDE)}
-            >
-              <path
-                d="M146.01 120.22C146.01 127.73 139.92 133.82 132.41 133.82C124.91 133.82 118.81 127.73 118.81 120.22C118.81 112.71 124.91 106.62 132.41 106.62C139.92 106.62 146.01 112.71 146.01 120.22Z"
+            <circle cx="0" cy="0" r=".4"></circle>
+            <g transform={getTransform(col_rotation)}>
+              <circle
+                cx={PIN_WIDTH / 2}
+                cy={PIN_WIDTH / 2}
+                r={PIN_WIDTH / 2}
                 className="pin-head"
-                stroke="#000000"
+                stroke={PIN_STROKE}
                 strokeOpacity={PIN_STROKE_OPACITY}
+                strokeWidth={PIN_STROKE_WIDTH}
                 fill={PIN_COLORS[i]}
                 fillOpacity={PIN_FILL_OPACITY}
-              ></path>
-              <path
-                d="M128.55 133.63L115.64 174.34"
+              />
+              <line
+                x1={PIN_WIDTH / 2}
+                y1={PIN_WIDTH}
+                x2={PIN_WIDTH / 2}
+                y2={PIN_HEIGHT}
                 className="pin-shaft"
-                stroke="#000000"
-                strokeWidth="1"
-                strokeOpacity=".6"
-              ></path>
-            </svg>
-            {/* <text
-            textAnchor="middle"
-            y={markerOffset}
-            style={{ fontFamily: "system-ui", fill: "#5D5A6D" }}
-          >
-            {name}
-          </text> */}
+                stroke={PIN_STROKE}
+                strokeWidth={PIN_STROKE_WIDTH}
+                strokeOpacity={PIN_STROKE_OPACITY}
+              />
+            </g>
           </Marker>
         );
     }),
@@ -119,7 +111,7 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
           {Markers}
         </ZoomableGroup>
       </ComposableMap>
-      <div>
+      {/* <div>
         {PIN_COLORS.map((color) => {
           const style = {
             backgroundColor: color + "88",
@@ -133,7 +125,7 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
             </span>
           );
         })}
-      </div>
+      </div> */}
     </>
   );
 };

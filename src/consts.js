@@ -24,25 +24,39 @@ export const MODE_DATA = {
   },
 };
 
+export const PIN_STROKE = "#000000";
+export const PIN_STROKE_WIDTH = 0.2;
 export const PIN_FILL_OPACITY = 1;
-export const PIN_STROKE_OPACITY = 0.3;
-export const PIN_WIDTH = 10;
-export const PIN_HEIGHT = 22;
+export const PIN_STROKE_OPACITY = 1;
+export const PIN_WIDTH = 8;
+export const PIN_HEIGHT = 20;
+
+// degrees tilt default
+export const ROTATION_DEFAULT = 12;
 // degrees per notch
 export const ROTATION_MAGNITUDE = 15;
 // to calc X offset as a result of rotation
-export const ROTATION_X_CONSTANT = 2.8;
+export const ROTATION_X_CONSTANT = 2.9;
+export const SHIFT_X_CONSTANT = 2;
 // to calc Y offset as a result of rotation
-export const ROTATION_Y_CONSTANT = 0.7;
+export const ROTATION_Y_CONSTANT = 1.5;
+export const SHIFT_Y_CONSTANT = -18.5;
 
-export const getTransform = (rotation) => {
-  const extent = rotation / 180;
-  const transX = 0 + extent * PIN_HEIGHT * ROTATION_X_CONSTANT;
-  const transY =
-    Math.abs(extent * PIN_HEIGHT * ROTATION_Y_CONSTANT) - PIN_HEIGHT * 0.94;
+export const getTransform = (rotationMultiple) => {
+  let pinRotation = 0;
+  // let pinRotation = ROTATION_DEFAULT;
+  // pinRotation += 10 * (Math.random() - 0.5);
+  pinRotation += rotationMultiple * ROTATION_MAGNITUDE;
 
-  const trans = `translate(${transX}, ${transY}) rotate(${rotation})`;
-  // console.log(trans);
+  const extent = pinRotation / 180;
+  let transX = extent * PIN_HEIGHT * ROTATION_X_CONSTANT;
+  transX += (extent * SHIFT_X_CONSTANT) - PIN_WIDTH / 2;
+
+  let transY = Math.abs(extent * PIN_HEIGHT * ROTATION_Y_CONSTANT);
+  transY -= ((extent * PIN_HEIGHT * ROTATION_Y_CONSTANT)) / 2;
+  transY += -Math.abs(extent * SHIFT_Y_CONSTANT) - PIN_HEIGHT;
+
+  const trans = `translate(${transX}, ${transY}) rotate(${pinRotation})`;
   return trans;
 };
 
