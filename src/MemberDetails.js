@@ -1,5 +1,11 @@
 import React from "react";
-import { Backdrop, makeStyles, Modal, Typography } from "@material-ui/core";
+import {
+  Backdrop,
+  Link,
+  makeStyles,
+  Modal,
+  Typography,
+} from "@material-ui/core";
 import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
@@ -10,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     position: "absolute",
-    // width: 400,
+    maxWidth: 500,
     backgroundColor: "#e8f2ff",
     // backgroundColor: theme.palette.background.paper,
     border: "1px solid #000",
@@ -25,6 +31,8 @@ const useStyles = makeStyles((theme) => ({
   },
   name: {
     fontSize: "1.5rem",
+    fontVariant: "petite-caps",
+    letterSpacing: "0.8px",
     verticalAlign: "top",
     textAlign: "unset",
     display: "inline-block",
@@ -32,13 +40,22 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   detailTitle: {
-    fontSize: ".75rem",
+    fontSize: ".6rem",
+    letterSpacing: "1.6px",
+    lineHeight: 1.5,
     fontFamily: "monospace",
     textTransform: "uppercase",
     paddingTop: theme.spacing(1),
   },
   detailValue: {
     fontSize: ".75rem",
+  },
+  profileLink: {
+    fontSize: ".75rem",
+    fontFamily: "monospace",
+    display: "inline-block",
+    paddingTop: theme.spacing(1),
+    color: "#0858c0",
   },
   headshot: {
     maxWidth: "75px",
@@ -52,7 +69,15 @@ const introDetails = [
   { key: "consulting_status", title: "Consulting Status" },
   { key: "location_&_timezone", title: "Location & Timezone" },
   { key: "educational_background", title: "Educational Background" },
+  // { key: "online_profile_link", title: "website", link: true },
 ];
+
+const bodyDetails = [
+  { key: "core_skills_multi", title: "Core Skills" },
+  { key: "focus_area_multi", title: "Focus Area" },
+  { key: "projects", title: "Projects" },
+];
+
 
 const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
   const isMemberSelected = !!selectedMember;
@@ -60,24 +85,49 @@ const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
   const classes = useStyles();
 
   const picUrl = _.get(selectedMember, "profile_pic.0.url");
+  const profileLink = _.get(selectedMember, "online_profile_link");
   const body = isMemberSelected && (
     <div className={classes.paper}>
       <div className={classes.introDetails}>
         <Typography className={classes.name} variant="h2">
           {selectedMember.name}
         </Typography>
-        {introDetails.map((detail) => (
+        {/* {picUrl && <img className={classes.headshot} src={picUrl} />} */}
+        {introDetails.map(({ key, title, link }) => (
           <>
             <Typography className={classes.detailTitle} variant="subtitle1">
-              {detail.title}
+              {title}
             </Typography>
             <Typography className={classes.detailValue} variant="body1">
-              {_.get(selectedMember, detail.key, "N/A")}
+              {_.get(selectedMember, key, "N/A")}
             </Typography>
           </>
         ))}
       </div>
-      {picUrl && <img className={classes.headshot} src={picUrl} />}
+      
+      <div className={classes.bodyDetails}>
+        {bodyDetails.map(({ key, title }) => (
+          <>
+            <Typography className={classes.detailTitle} variant="subtitle1">
+              {title}
+            </Typography>
+            <Typography className={classes.detailValue} variant="body1">
+              {_.get(selectedMember, key, ["N/A"]).join(", ")}
+            </Typography>
+          </>
+        ))}
+      </div>
+
+      {profileLink && (
+        <Link
+          className={classes.profileLink}
+          href={profileLink}
+          rel="noreferrer"
+          target="_blank"
+        >
+          {profileLink}
+        </Link>
+      )}
     </div>
   );
 

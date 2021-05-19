@@ -54,8 +54,6 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
               setTooltipContent("");
             }}
           >
-            {/* reference point: */}
-            {/* <circle cx="0" cy="0" r=".4"></circle> */}
             <g transform={getTransform(col_rotation)}>
               <line
                 x1={PIN_WIDTH / 2}
@@ -79,6 +77,8 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
                 fillOpacity={PIN_FILL_OPACITY}
               />
             </g>
+            {/* reference point: */}
+            {/* <circle cx="0" cy="0" r=".4"></circle> */}
           </Marker>
         );
       }),
