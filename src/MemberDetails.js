@@ -17,6 +17,8 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position: "absolute",
     maxWidth: 500,
+    maxHeight: "85vh",
+    overflowY: "scroll",
     backgroundColor: "#e8f2ff",
     // backgroundColor: theme.palette.background.paper,
     border: "1px solid #000",
@@ -104,7 +106,7 @@ const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
           </>
         ))}
       </div>
-      
+
       <div className={classes.bodyDetails}>
         {bodyDetails.map(({ key, title }) => (
           <>

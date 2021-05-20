@@ -58,12 +58,12 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
             <g transform={getTransform(col_rotation)}>
               <rect
                 ry=".5"
-                x={(PIN_WIDTH / 2) - (PIN_SHAFT_WIDTH / 2)}
+                x={PIN_WIDTH / 2 - PIN_SHAFT_WIDTH / 2}
                 y={PIN_WIDTH / 2}
                 width={PIN_SHAFT_WIDTH}
                 height={PIN_HEIGHT - PIN_WIDTH / 2}
                 fill="url(#shaft-reflection)"
-                class="pin-shaft"
+                className="pin-shaft"
                 strokeWidth="0"
                 strokeOpacity="0"
               />

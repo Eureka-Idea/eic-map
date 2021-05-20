@@ -6,9 +6,32 @@ import "./styles.css";
 import MapChart from "./MapChart";
 import ReactTooltip from "react-tooltip";
 import MemberDetails from "./MemberDetails";
+import _, { lowerCase } from "lodash";
 
 // format of col nicknames
 const regexpNickname = /(col_\w+)/;
+
+const MULTI_SELECT_VALUE_MAP = {
+  core_skills_multi: [],
+  focus_area_multi: [],
+  projects: [],
+};
+
+const setMultiSelectValues = (members) => {
+  members.forEach((member) => {
+    _.each(MULTI_SELECT_VALUE_MAP, (v, field) => {
+      const values = member[field] || [];
+      MULTI_SELECT_VALUE_MAP[field].push(...values);
+    });
+  });
+
+  _.each(MULTI_SELECT_VALUE_MAP, (v, field) => {
+    MULTI_SELECT_VALUE_MAP[field] = _.chain(MULTI_SELECT_VALUE_MAP[field])
+      .uniq()
+      .sort((a, b) => lowerCase(a) > lowerCase(b))
+      .value();
+  });
+};
 
 function App() {
   const [members, setMembers] = useState([]);;
@@ -41,6 +64,7 @@ function App() {
           return memObj;
         });
 
+        setMultiSelectValues(members);
         setMembers(members);
       });
   }, []);;
@@ -59,7 +83,7 @@ function App() {
     <div>
       <MemberDetails
         selectedMember={selectedMember}
-        unselectMemberHandler={unselectMemberHandler}     
+        unselectMemberHandler={unselectMemberHandler}
       />
       <ReactTooltip>{tooltipContent}</ReactTooltip>
       <MapChart
