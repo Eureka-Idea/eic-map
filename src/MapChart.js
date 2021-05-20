@@ -15,11 +15,10 @@ import {
   PIN_STROKE_OPACITY,
   PIN_GRAD_OPACITY,
   PIN_HEAD_STROKE_WIDTH,
-  PIN_SHAFT_STROKE_WIDTH,
+  PIN_SHAFT_WIDTH,
   PIN_WIDTH,
   PIN_HEIGHT,
   PIN_HEAD_SCALE,
-  ROTATION_MAGNITUDE,
   getTransform,
 } from "./consts";
 
@@ -57,7 +56,18 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
             }}
           >
             <g transform={getTransform(col_rotation)}>
-              <line
+              <rect
+                ry=".5"
+                x={(PIN_WIDTH / 2) - (PIN_SHAFT_WIDTH / 2)}
+                y={PIN_WIDTH / 2}
+                width={PIN_SHAFT_WIDTH}
+                height={PIN_HEIGHT - PIN_WIDTH / 2}
+                fill="url(#shaft-reflection)"
+                class="pin-shaft"
+                strokeWidth="0"
+                strokeOpacity="0"
+              />
+              {/* <line
                 x1={PIN_WIDTH / 2}
                 y1={PIN_WIDTH / 2}
                 x2={PIN_WIDTH / 2}
@@ -67,7 +77,7 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
                 strokeWidth={PIN_SHAFT_STROKE_WIDTH}
                 strokeOpacity={PIN_STROKE_OPACITY}
                 strokeLinecap="round"
-              />
+              /> */}
               <circle
                 cx={PIN_WIDTH / 2}
                 cy={PIN_WIDTH / 2}
@@ -85,7 +95,7 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
                 r={(PIN_WIDTH / 2) * PIN_HEAD_SCALE}
                 className="pin-head-grad"
                 stroke="transparent"
-                fill="url(#light-reflection)"
+                fill="url(#head-reflection)"
                 fillOpacity={PIN_GRAD_OPACITY}
               />
             </g>
@@ -102,7 +112,7 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
       <ComposableMap data-tip="">
         <defs>
           <radialGradient
-            id="light-reflection"
+            id="head-reflection"
             cx="46%"
             cy="60%"
             r="50%"
@@ -112,6 +122,11 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
             <stop offset="0%" stopOpacity="0" stopColor="#fff" />
             <stop offset="100%" stopOpacity="1" stopColor="#000" />
           </radialGradient>
+          <linearGradient id="shaft-reflection" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopOpacity="1" stopColor="#777" />
+            <stop offset="46%" stopOpacity="1" stopColor="#fcfcfc" />
+            <stop offset="100%" stopOpacity="1" stopColor="#777" />
+          </linearGradient>
         </defs>
         <ZoomableGroup zoom={1}>
           <Geographies geography={GEO_URL}>
