@@ -13,7 +13,9 @@ import {
   PIN_FILL_OPACITY,
   PIN_STROKE,
   PIN_STROKE_OPACITY,
-  PIN_STROKE_WIDTH,
+  PIN_GRAD_OPACITY,
+  PIN_HEAD_STROKE_WIDTH,
+  PIN_SHAFT_STROKE_WIDTH,
   PIN_WIDTH,
   PIN_HEIGHT,
   PIN_HEAD_SCALE,
@@ -31,7 +33,7 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
 
   const { headerText, colors } = MODE_DATA["consultants"];
 
-  const Markers = useMemo(() => 
+  const Markers = useMemo(() =>
     members
       .filter((m) => m.latitude && m.longitude)
       .sort((m1, m2) => m2.latitude - m1.latitude) // so shafts appear under heads
@@ -62,8 +64,9 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
                 y2={PIN_HEIGHT}
                 className="pin-shaft"
                 stroke={PIN_STROKE}
-                strokeWidth={PIN_STROKE_WIDTH}
+                strokeWidth={PIN_SHAFT_STROKE_WIDTH}
                 strokeOpacity={PIN_STROKE_OPACITY}
+                strokeLinecap="round"
               />
               <circle
                 cx={PIN_WIDTH / 2}
@@ -72,9 +75,18 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
                 className="pin-head"
                 stroke={PIN_STROKE}
                 strokeOpacity={PIN_STROKE_OPACITY}
-                strokeWidth={PIN_STROKE_WIDTH}
+                strokeWidth={PIN_HEAD_STROKE_WIDTH}
                 fill={PIN_COLORS[i]}
                 fillOpacity={PIN_FILL_OPACITY}
+              />
+              <circle
+                cx={PIN_WIDTH / 2}
+                cy={PIN_WIDTH / 2}
+                r={(PIN_WIDTH / 2) * PIN_HEAD_SCALE}
+                className="pin-head-grad"
+                stroke="transparent"
+                fill="url(#light-reflection)"
+                fillOpacity={PIN_GRAD_OPACITY}
               />
             </g>
             {/* reference point: */}
@@ -83,11 +95,24 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
         );
       }),
     [members, setTooltipContent]
-    ) 
+    )
 
   return (
     <>
       <ComposableMap data-tip="">
+        <defs>
+          <radialGradient
+            id="light-reflection"
+            cx="46%"
+            cy="60%"
+            r="50%"
+            fx="46%"
+            fy="60%"
+          >
+            <stop offset="0%" stopOpacity="0" stopColor="#fff" />
+            <stop offset="100%" stopOpacity="1" stopColor="#000" />
+          </radialGradient>
+        </defs>
         <ZoomableGroup zoom={1}>
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
@@ -95,7 +120,7 @@ const MapChart = ({ members, setTooltipContent, setSelectedMember }) => {
                 <Geography
                   fill={colors.secondary}
                   stroke={colors.outline}
-                  strokeWidth=".2"
+                  strokeWidth=".1"
                   key={geo.rsmKey}
                   geography={geo}
                   onMouseEnter={(e) => {

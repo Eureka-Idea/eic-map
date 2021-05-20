@@ -9,7 +9,7 @@ export const MODE_DATA = {
     colors: {
       primary: "#1b63c188",
       secondary: "#5a87c144",
-      outline: "#00000055",
+      outline: "#6d2e00bd",
       // primary: "#1b63c1e3",
       // secondary: "#5a87c126",
     },
@@ -25,35 +25,42 @@ export const MODE_DATA = {
 };
 
 export const PIN_FILL_OPACITY = 1;
+export const PIN_GRAD_OPACITY = 0.3;
 export const PIN_STROKE_OPACITY = 1;
-export const PIN_STROKE = "#000000";
-export const PIN_STROKE_WIDTH = 0.2;
+export const PIN_STROKE = "#555";
+export const PIN_HEAD_STROKE_WIDTH = 0;
+export const PIN_SHAFT_STROKE_WIDTH = 0.2;
 
 export const PIN_WIDTH = 8;
-export const PIN_HEIGHT = 20;
-export const PIN_HEAD_SCALE = .87;
+export const PIN_HEIGHT = 16;
+export const PIN_HEAD_SCALE = 1;
 
 const degToRad = (d) => (d * Math.PI) / 180;
 const radToDeg = (r) => (r * 180) / Math.PI;
+const getRandom = (spread) => spread * (Math.random() - 0.5);
 
 // default tilt
 export const ROTATION_DEFAULT = degToRad(13);
 // range of added randomness
 export const RANDOMNESS_SPREAD = degToRad(10);
-
 // radians per multiple
-export const ROTATION_MAGNITUDE = Math.PI / 7;
+export const ROTATION_MAGNITUDE = (2 * Math.PI) / 7;
 
 export const getTransform = (rotationMultiple) => {
   let pinRotation = ROTATION_DEFAULT;
-  pinRotation += RANDOMNESS_SPREAD * (Math.random() - 0.5);
+  // slight random lean for realism
+  pinRotation += getRandom(RANDOMNESS_SPREAD);
   pinRotation += rotationMultiple * ROTATION_MAGNITUDE;
 
   const transX =
+    // slight random offset for realism
+    getRandom((PIN_WIDTH + PIN_HEIGHT) / 20) +
     Math.sin(pinRotation) * PIN_HEIGHT -
     (Math.cos(pinRotation) * PIN_WIDTH) / 2;
   const transY =
-    -Math.cos(pinRotation) * PIN_HEIGHT -
+    // slight random offset for realism
+    getRandom((PIN_WIDTH + PIN_HEIGHT) / 20) -
+    Math.cos(pinRotation) * PIN_HEIGHT -
     (Math.sin(pinRotation) * PIN_WIDTH) / 2;
 
   const degRotation = radToDeg(pinRotation);
