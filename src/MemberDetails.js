@@ -82,13 +82,13 @@ const bodyDetails = [
 
 
 const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
-  const isMemberSelected = !!selectedMember;
-
+  // const isMemberSelected = !!selectedMember;
   const classes = useStyles();
+  if (!selectedMember) return null;
 
   const picUrl = _.get(selectedMember, "profile_pic.0.url");
   const profileLink = _.get(selectedMember, "online_profile_link");
-  const body = isMemberSelected && (
+  const body = (
     <div className={classes.paper}>
       <div className={classes.introDetails}>
         <Typography className={classes.name} variant="h2">
@@ -136,7 +136,7 @@ const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
   return (
     <Modal
       className={classes.modal}
-      open={isMemberSelected}
+      open={true}
       onClose={unselectMemberHandler}
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
