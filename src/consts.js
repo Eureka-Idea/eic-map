@@ -28,7 +28,7 @@ export const PIN_FILL_OPACITY = 1;
 export const PIN_GRAD_OPACITY = 0.3;
 export const PIN_STROKE_OPACITY = 1;
 export const PIN_STROKE = "#555";
-export const PIN_SHAFT_WIDTH = 1;
+export const PIN_SHAFT_WIDTH = 1.6;
 export const PIN_HEAD_STROKE_WIDTH = 0;
 // export const PIN_SHAFT_STROKE_WIDTH = 0.2;
 

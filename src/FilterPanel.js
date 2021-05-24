@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     top: "10vh",
     bottom: "10vh",
     right: 0,
-    width: "50vw",
+    width: "300px",
     // maxHeight: "85vh",
     overflowY: "scroll",
     // backgroundColor: "#e8f2ff",
@@ -26,20 +26,6 @@ const useStyles = makeStyles((theme) => ({
     // margin: theme.spacing(2),
   },
 }));
-
-const introDetails = [
-  { key: "membership", title: "Membership" },
-  { key: "consulting_status", title: "Consulting Status" },
-  { key: "location_&_timezone", title: "Location & Timezone" },
-  { key: "educational_background", title: "Educational Background" },
-  // { key: "online_profile_link", title: "website", link: true },
-];
-
-const filterableFields = [
-  { key: "core_skills_multi", value: "Core Skills" },
-  { key: "focus_area_multi", value: "Focus Area" },
-  { key: "projects", value: "Projects" },
-];
 
 const FilterPanel = ({
   multiSelectConfig,
@@ -52,24 +38,26 @@ const FilterPanel = ({
 
   const classes = useStyles();
 
-  const handler = (key, selected) => {
-    // debugger;
-    handleSelectOptions(key, selected);
-  };
 
   return (
     <div className={classes.paper}>
+      Filter to members fitting <emphasis>all</emphasis> of the following
+     
+     
+      criteria
       {multiSelectConfig.map(({ title, options, key }) => (
         <div key={key}>
           {title}
           <Select
+            placeholder="any"
             id={key}
             isMulti
             closeMenuOnSelect={false}
             defaultValue={null}
-            onChange={handleSelectOptions}
+            onChange={handleSelectOptions.bind(this, key)}
             options={options}
           />
+          <br />
         </div>
       ))}
     </div>

@@ -6,7 +6,7 @@ import "./styles.css";
 import MapChart from "./MapChart";
 import ReactTooltip from "react-tooltip";
 import MemberDetails from "./MemberDetails";
-import _, { lowerCase } from "lodash";
+import _ from "lodash";
 import FilterPanel from "./FilterPanel";
 
 // format of col nicknames
@@ -19,8 +19,8 @@ const regexpNickname = /(col_\w+)/;
 // };
 
 const MULTI_SELECT_CONFIG = [
-  { key: "core_skills_multi", title: "Core Skills", options: [] },
   { key: "focus_area_multi", title: "Focus Area", options: [] },
+  { key: "core_skills_multi", title: "Core Skills", options: [] },
   { key: "projects", title: "Projects", options: [] },
 ];
 const multiStateMap = _.reduce(MULTI_SELECT_CONFIG, (accum, next) => {
@@ -28,6 +28,7 @@ const multiStateMap = _.reduce(MULTI_SELECT_CONFIG, (accum, next) => {
   return accum;
 }, {});
 
+// based on members' values, select possible multi select filter options
 const setMultiSelectValues = (members) => {
   members.forEach((member) => {
     _.each(MULTI_SELECT_CONFIG, ({ key, options }) => {
@@ -37,17 +38,17 @@ const setMultiSelectValues = (members) => {
   });
 
   MULTI_SELECT_CONFIG.forEach(({ options, key }, idx) => {
-    console.log(options);
     MULTI_SELECT_CONFIG[idx].options = _.chain(options)
       .uniq()
-      .sort((a, b) => lowerCase(a) > lowerCase(b))
+      .sort((a, b) => a.toLowerCase() > b.toLowerCase())
       .map((o) => ({ label: o, value: o }))
       .value();
   });
 };
 
 function App() {
-  const [members, setMembers] = useState([]);
+  const [visibleMemberMap, setVisibleMemberMap] = useState({});
+  const [allMembers, setAllMembers] = useState([]);
 
   useEffect(() => {
     console.log("FETCHING MEMBER DATA");
@@ -57,8 +58,10 @@ function App() {
     )
       .then((response) => response.json())
       .then((data) => {
-        const members = data.records.map((r) => {
-          const memObj = { id: r.id };
+        const allMemberMap = {};
+        const allMembers = data.records.map((r, index) => {
+          const memObj = { id: r.id, index };
+          allMemberMap[index] = true;
 
           Object.keys(r.fields).forEach((field) => {
             const val = r.fields[field];
@@ -78,34 +81,46 @@ function App() {
           return memObj;
         });
 
-        setMultiSelectValues(members);
-        setMembers(members);
+        setMultiSelectValues(allMembers);
+        setAllMembers(allMembers);
       });
-  }, []);;
+  }, []);
 
   const [tooltipContent, setTooltipContent] = useState("");
 
   const [selectedOptionsMap, setSelectedOptionsMap] = useState(multiStateMap);
 
+  const setVisible = () => {
+    const visibleMap = allMembers.reduce((visMap, member) => {
+      const visible = _.every(selectedOptionsMap, (selectedValues, field) => {
+        console.log("field, selectedValues: ");
+        console.log(field, selectedValues);
+        return selectedValues.every(
+          ({ value }) => member[field] && member[field].includes(value)
+        );
+      });
+
+      if (visible) visMap[member.index] = true;
+      return visMap;
+    }, {});
+
+    console.log("visibleMap: ", visibleMap);
+    setVisibleMemberMap(visibleMap);
+  };
+  const debouncedSetVisible = _.debounce(setVisible, 500);
+  useEffect(debouncedSetVisible, [selectedOptionsMap, allMembers]);
+
   const handleSelectOptions = (key, selected) => {
-    // const options = selectedOptionsMap[key];
-    console.log(key, selected);
-    // options.push(selected);
     const newState = _.cloneDeep(selectedOptionsMap);
     _.set(newState, key, selected);
+
     setSelectedOptionsMap(newState);
   };
 
-  const [selectedMember, setSelectedMember] = useState(null);
-  const selectMemberHandler = (m) => {
-    setSelectedMember(m);
-  };
-  const unselectMemberHandler = () => {
-    setSelectedMember(null);
-  };
 
-  console.log("NOW: ", selectedOptionsMap);
-  
+  const [selectedMember, setSelectedMember] = useState(null);
+  const unselectMemberHandler = () => setSelectedMember(null);
+
   return (
     <div>
       <FilterPanel
@@ -119,8 +134,9 @@ function App() {
       />
       <ReactTooltip>{tooltipContent}</ReactTooltip>
       <MapChart
-        members={members}
-        setSelectedMember={selectMemberHandler}
+        allMembers={allMembers}
+        visibleMemberMap={visibleMemberMap}
+        setSelectedMember={setSelectedMember}
         setTooltipContent={setTooltipContent}
       />
     </div>

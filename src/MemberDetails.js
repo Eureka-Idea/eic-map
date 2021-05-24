@@ -75,8 +75,8 @@ const introDetails = [
 ];
 
 const bodyDetails = [
-  { key: "core_skills_multi", title: "Core Skills" },
   { key: "focus_area_multi", title: "Focus Area" },
+  { key: "core_skills_multi", title: "Core Skills" },
   { key: "projects", title: "Projects" },
 ];
 
