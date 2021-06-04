@@ -81,6 +81,8 @@ function App() {
 
   const [selectedMember, setSelectedMember] = useState(null)
   const unselectMemberHandler = () => setSelectedMember(null)
+  
+  const [panelOpen, setPanelOpen] = useState(false)
 
   useEffect(() => {
 
@@ -136,6 +138,7 @@ function App() {
 
           setMultiSelectValues(allMembers)
           setAllMembers(allMembers)
+          setPanelOpen(true)
         })
         .catch((error) => {
           console.error(error)
@@ -175,6 +178,8 @@ function App() {
         multiSelectConfig={MULTI_SELECT_CONFIG}
         selectedOptionsMap={selectedOptionsMap}
         handleSelectOptions={handleSelectOptions}
+        panelOpen={panelOpen}
+        setPanelOpen={setPanelOpen}
       />
       <MemberDetails
         selectedMember={selectedMember}

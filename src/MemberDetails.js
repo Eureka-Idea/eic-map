@@ -93,9 +93,6 @@ const MemberDetails = ({
   unselectMemberHandler,
   selectedOptionsMap,
   MULTI_SELECT_CONFIG,
-  PROJECT_NAME_MAP,
-  SKILL_NAME_MAP,
-  FIELD_NAME_MAP,
 }) => {
   // const isMemberSelected = !!selectedMember;
   const classes = useStyles()
@@ -119,7 +116,7 @@ const MemberDetails = ({
       }))
       .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase())
       .value()
-    
+
     return (
       <>
         {processedAttributes.map(({ label, selected }, idx) => {
