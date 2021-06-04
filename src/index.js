@@ -50,6 +50,12 @@ function App() {
   const [visibleMemberMap, setVisibleMemberMap] = useState({});
   const [allMembers, setAllMembers] = useState([]);
 
+  const [tooltipContent, setTooltipContent] = useState("");
+  const [selectedOptionsMap, setSelectedOptionsMap] = useState(multiStateMap);
+
+  const [selectedMember, setSelectedMember] = useState(null);
+  const unselectMemberHandler = () => setSelectedMember(null);
+
   useEffect(() => {
     console.log("FETCHING MEMBER DATA");
     fetch(
@@ -59,42 +65,42 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         const allMemberMap = {};
-        const allMembers = data.records.map((r, index) => {
-          const memObj = { id: r.id, index };
-          allMemberMap[index] = true;
+        const allMembers = data.records
+          .filter((m) => m.fields.Latitude && m.fields.Longitude) // only located members
+          .sort((m1, m2) => m2.fields.Latitude - m1.fields.Latitude) // so pins overlap correctly
+          .map((r, index) => {
+            const memObj = { index };
+            allMemberMap[index] = true; // all members start out visible
 
-          Object.keys(r.fields).forEach((field) => {
-            const val = r.fields[field];
-            const nicknameMatch = field.match(regexpNickname);
+            Object.keys(r.fields).forEach((field) => {
+              const val = r.fields[field];
+              const nicknameMatch = field.match(regexpNickname);
 
-            if (nicknameMatch && nicknameMatch[0]) {
-              const nickname = nicknameMatch[0];
-              memObj[nickname] = val;
-            } else {
-              const standardizedField = field
-                .toLowerCase()
-                .replaceAll(" ", "_");
-              memObj[standardizedField] = val;
-            }
+              if (nicknameMatch && nicknameMatch[0]) {
+                const nickname = nicknameMatch[0];
+                memObj[nickname] = val;
+              } else {
+                const standardizedField = field
+                  .toLowerCase()
+                  .replaceAll(" ", "_");
+                memObj[standardizedField] = val;
+              }
+            });
+
+            return memObj;
           });
 
-          return memObj;
-        });
 
         setMultiSelectValues(allMembers);
         setAllMembers(allMembers);
       });
   }, []);
 
-  const [tooltipContent, setTooltipContent] = useState("");
-
-  const [selectedOptionsMap, setSelectedOptionsMap] = useState(multiStateMap);
-
   const setVisible = () => {
     const visibleMap = allMembers.reduce((visMap, member) => {
       const visible = _.every(selectedOptionsMap, (selectedValues, field) => {
-        console.log("field, selectedValues: ");
-        console.log(field, selectedValues);
+        // console.log("field, selectedValues: ");
+        // console.log(field, selectedValues);
         return selectedValues.every(
           ({ value }) => member[field] && member[field].includes(value)
         );
@@ -116,10 +122,6 @@ function App() {
 
     setSelectedOptionsMap(newState);
   };
-
-
-  const [selectedMember, setSelectedMember] = useState(null);
-  const unselectMemberHandler = () => setSelectedMember(null);
 
   return (
     <div>

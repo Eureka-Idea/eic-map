@@ -37,7 +37,7 @@ const MapChart = ({
   const MarkerMap = useMemo(
     () =>
       allMembers
-        .filter((m) => m.latitude && m.longitude)
+        // .filter((m) => m.latitude && m.longitude)
         .reduce((accum, m, i) => {
           const { name, latitude, longitude, col_rotation = 0 } = m;
           if (!i) console.log("RUNNING MEMOIZED MEMBER CREATION");
@@ -106,10 +106,11 @@ const MapChart = ({
     [allMembers, setTooltipContent]
   );
 
-  const visibleMarkers = _.map(
-    visibleMemberMap,
-    (b, index) => MarkerMap[index]
-  );
+  const visibleMarkers = _.chain(visibleMemberMap)
+    .map((bool, index) => index)
+    .sort((a, b) => Number(a) - Number(b))
+    .map((index) => MarkerMap[index])
+    .value();
 
   return (
     <>
