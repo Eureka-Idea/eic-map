@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react"
 import {
   ComposableMap,
   Geographies,
   Geography,
   ZoomableGroup,
   Marker,
-} from "react-simple-maps";
+} from "react-simple-maps"
 import {
   GEO_URL,
   MODE_DATA,
@@ -20,9 +20,8 @@ import {
   PIN_HEIGHT,
   PIN_HEAD_SCALE,
   getTransform,
-} from "./consts";
-import _ from "lodash";
-
+} from "./consts"
+import _ from "lodash"
 
 const MapChart = ({
   allMembers,
@@ -30,27 +29,27 @@ const MapChart = ({
   setTooltipContent,
   setSelectedMember,
 }) => {
-  console.log("allMembers: ", allMembers);
+  console.log("allMembers: ", allMembers)
 
-  const { headerText, colors } = MODE_DATA["consultants"];
+  const { headerText, colors } = MODE_DATA["consultants"]
 
   const MarkerMap = useMemo(
     () =>
       allMembers
         // .filter((m) => m.latitude && m.longitude)
         .reduce((accum, m, i) => {
-          const { name, latitude, longitude, col_rotation = 0 } = m;
-          if (!i) console.log("RUNNING MEMOIZED MEMBER CREATION");
+          const { name, latitude, longitude, col_rotation = 0 } = m
+          if (!i) console.log("RUNNING MEMOIZED MEMBER CREATION")
           accum[m.index] = (
             <Marker
               key={name}
               coordinates={[longitude, latitude]}
               onClick={setSelectedMember.bind(null, m)}
               onMouseEnter={(e) => {
-                setTooltipContent(name);
+                setTooltipContent(name)
               }}
               onMouseLeave={() => {
-                setTooltipContent("");
+                setTooltipContent("")
               }}
             >
               <g transform={getTransform(col_rotation)}>
@@ -100,17 +99,17 @@ const MapChart = ({
               {/* reference point: */}
               {/* <circle cx="0" cy="0" r=".4"></circle> */}
             </Marker>
-          );
-          return accum;
+          )
+          return accum
         }, {}),
     [allMembers, setTooltipContent]
-  );
+  )
 
   const visibleMarkers = _.chain(visibleMemberMap)
     .map((bool, index) => index)
     .sort((a, b) => Number(a) - Number(b))
     .map((index) => MarkerMap[index])
-    .value();
+    .value()
 
   return (
     <>
@@ -150,12 +149,12 @@ const MapChart = ({
                   key={geo.rsmKey}
                   geography={geo}
                   onMouseEnter={(e) => {
-                    e.target.setAttribute("fill", colors.primary);
-                    setTooltipContent(geo.properties.NAME);
+                    e.target.setAttribute("fill", colors.primary)
+                    setTooltipContent(geo.properties.NAME)
                   }}
                   onMouseLeave={(e) => {
-                    e.target.setAttribute("fill", colors.secondary);
-                    setTooltipContent("");
+                    e.target.setAttribute("fill", colors.secondary)
+                    setTooltipContent("")
                   }}
                 />
               ))
@@ -180,7 +179,7 @@ const MapChart = ({
         })}
       </div> */}
     </>
-  );
-};
+  )
+}
 
-export default MapChart;
+export default MapChart

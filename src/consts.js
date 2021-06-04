@@ -1,7 +1,7 @@
-import _ from "lodash";
+import _ from "lodash"
 
 export const GEO_URL =
-  "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
+  "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json"
 
 export const MODE_DATA = {
   consultants: {
@@ -22,52 +22,52 @@ export const MODE_DATA = {
       outline: "#00000055",
     },
   },
-};
+}
 
-export const PIN_FILL_OPACITY = 1;
-export const PIN_GRAD_OPACITY = 0.3;
-export const PIN_STROKE_OPACITY = 1;
-export const PIN_STROKE = "#555";
-export const PIN_SHAFT_WIDTH = 1.6;
-export const PIN_HEAD_STROKE_WIDTH = 0;
+export const PIN_FILL_OPACITY = 1
+export const PIN_GRAD_OPACITY = 0.3
+export const PIN_STROKE_OPACITY = 1
+export const PIN_STROKE = "#555"
+export const PIN_SHAFT_WIDTH = 1.6
+export const PIN_HEAD_STROKE_WIDTH = 0
 // export const PIN_SHAFT_STROKE_WIDTH = 0.2;
 
-export const PIN_WIDTH = 8;
-export const PIN_HEIGHT = 16;
-export const PIN_HEAD_SCALE = 1;
+export const PIN_WIDTH = 8
+export const PIN_HEIGHT = 16
+export const PIN_HEAD_SCALE = 1
 
-const degToRad = (d) => (d * Math.PI) / 180;
-const radToDeg = (r) => (r * 180) / Math.PI;
-const getRandom = (spread) => spread * (Math.random() - 0.5);
+const degToRad = (d) => (d * Math.PI) / 180
+const radToDeg = (r) => (r * 180) / Math.PI
+const getRandom = (spread) => spread * (Math.random() - 0.5)
 
 // default tilt
-export const ROTATION_DEFAULT = degToRad(13);
+export const ROTATION_DEFAULT = degToRad(13)
 // range of added randomness
-export const RANDOMNESS_SPREAD = degToRad(10);
+export const RANDOMNESS_SPREAD = degToRad(10)
 // radians per multiple
-export const ROTATION_MAGNITUDE = (2 * Math.PI) / 7;
+export const ROTATION_MAGNITUDE = (2 * Math.PI) / 7
 
 export const getTransform = (rotationMultiple) => {
-  let pinRotation = ROTATION_DEFAULT;
+  let pinRotation = ROTATION_DEFAULT
   // slight random lean for realism
-  pinRotation += getRandom(RANDOMNESS_SPREAD);
-  pinRotation += rotationMultiple * ROTATION_MAGNITUDE;
+  pinRotation += getRandom(RANDOMNESS_SPREAD)
+  pinRotation += rotationMultiple * ROTATION_MAGNITUDE
 
   const transX =
     // slight random offset for realism
     getRandom((PIN_WIDTH + PIN_HEIGHT) / 20) +
     Math.sin(pinRotation) * PIN_HEIGHT -
-    (Math.cos(pinRotation) * PIN_WIDTH) / 2;
+    (Math.cos(pinRotation) * PIN_WIDTH) / 2
   const transY =
     // slight random offset for realism
     getRandom((PIN_WIDTH + PIN_HEIGHT) / 20) -
     Math.cos(pinRotation) * PIN_HEIGHT -
-    (Math.sin(pinRotation) * PIN_WIDTH) / 2;
+    (Math.sin(pinRotation) * PIN_WIDTH) / 2
 
-  const degRotation = radToDeg(pinRotation);
-  const trans = `translate(${transX}, ${transY}) rotate(${degRotation})`;
-  return trans;
-};
+  const degRotation = radToDeg(pinRotation)
+  const trans = `translate(${transX}, ${transY}) rotate(${degRotation})`
+  return trans
+}
 
 export const PIN_COLORS = _.uniq([
   "#63b598",
@@ -349,4 +349,4 @@ export const PIN_COLORS = _.uniq([
   "#07d7f6",
   "#dce77a",
   "#77ecca",
-]);
+])

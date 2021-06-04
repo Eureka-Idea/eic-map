@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
   Backdrop,
   Link,
   makeStyles,
   Modal,
   Typography,
-} from "@material-ui/core";
-import _ from "lodash";
-import Select from "react-select";
+} from "@material-ui/core"
+import _ from "lodash"
+import Select from "react-select"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3, 4),
     // margin: theme.spacing(2),
   },
-}));
+}))
 
 const FilterPanel = ({
   multiSelectConfig,
@@ -34,16 +34,13 @@ const FilterPanel = ({
 }) => {
   // const [selectedOption, setSelectedOption] = useState(null);
 
-  console.log(selectedOptionsMap);
+  console.log(selectedOptionsMap)
 
-  const classes = useStyles();
-
+  const classes = useStyles()
 
   return (
     <div className={classes.paper}>
       Filter to members fitting <emphasis>all</emphasis> of the following
-     
-     
       criteria
       {multiSelectConfig.map(({ title, options, key }) => (
         <div key={key}>
@@ -61,7 +58,7 @@ const FilterPanel = ({
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default FilterPanel;
+export default FilterPanel

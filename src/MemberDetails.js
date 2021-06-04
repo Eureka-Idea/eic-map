@@ -1,12 +1,12 @@
-import React from "react";
+import React from "react"
 import {
   Backdrop,
   Link,
   makeStyles,
   Modal,
   Typography,
-} from "@material-ui/core";
-import _ from "lodash";
+} from "@material-ui/core"
+import _ from "lodash"
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     verticalAlign: "top",
   },
-}));
+}))
 
 const introDetails = [
   { key: "membership", title: "Membership" },
@@ -72,22 +72,21 @@ const introDetails = [
   { key: "location_&_timezone", title: "Location & Timezone" },
   { key: "educational_background", title: "Educational Background" },
   // { key: "online_profile_link", title: "website", link: true },
-];
+]
 
 const bodyDetails = [
   { key: "focus_area_multi", title: "Focus Area" },
   { key: "core_skills_multi", title: "Core Skills" },
   { key: "projects", title: "Projects" },
-];
-
+]
 
 const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
   // const isMemberSelected = !!selectedMember;
-  const classes = useStyles();
-  if (!selectedMember) return null;
+  const classes = useStyles()
+  if (!selectedMember) return null
 
-  const picUrl = _.get(selectedMember, "profile_pic.0.url");
-  const profileLink = _.get(selectedMember, "online_profile_link");
+  const picUrl = _.get(selectedMember, "profile_pic.0.url")
+  const profileLink = _.get(selectedMember, "online_profile_link")
   const body = (
     <div className={classes.paper}>
       <div className={classes.introDetails}>
@@ -131,7 +130,7 @@ const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
         </Link>
       )}
     </div>
-  );
+  )
 
   return (
     <Modal
@@ -147,7 +146,7 @@ const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
     >
       {body}
     </Modal>
-  );
-};
+  )
+}
 
-export default MemberDetails;
+export default MemberDetails
