@@ -1,7 +1,13 @@
 import _ from "lodash"
 
 export const GEO_URL =
-  "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json"
+"https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json"
+
+// read-only key, only exposes public data
+const KEY = "keyFRBqnIvAd1gkXG"
+export const getApiLink = (tableName) => {
+  return `https://api.airtable.com/v0/appfS3glFVXDszRVn/${tableName}?api_key=${KEY}`
+}
 
 export const MODE_DATA = {
   consultants: {

@@ -8,6 +8,7 @@ import ReactTooltip from "react-tooltip"
 import MemberDetails from "./MemberDetails"
 import _ from "lodash"
 import FilterPanel from "./FilterPanel"
+import { getApiLink } from "./consts"
 
 // format of col nicknames
 const regexpNickname = /(col_\w+)/
@@ -19,9 +20,30 @@ const regexpNickname = /(col_\w+)/
 // };
 
 const MULTI_SELECT_CONFIG = [
-  { key: "focus_area_multi", title: "Focus Area", options: [] },
-  { key: "core_skills_multi", title: "Core Skills", options: [] },
-  { key: "projects", title: "Projects", options: [] },
+  {
+    key: "focus_area",
+    title: "Focus Area",
+    options: [],
+    nameMap: {},
+    tableName: "focus%20area",
+    fieldName: "Focus Area",
+  },
+  {
+    key: "core_skills",
+    title: "Core Skills",
+    options: [],
+    nameMap: {},
+    tableName: "skills",
+    fieldName: "Core Skill",
+  },
+  {
+    key: "projects",
+    title: "Projects",
+    options: [],
+    nameMap: {},
+    tableName: "projects",
+    fieldName: "Project Name",
+  },
 ]
 const multiStateMap = _.reduce(
   MULTI_SELECT_CONFIG,
@@ -32,7 +54,7 @@ const multiStateMap = _.reduce(
   {}
 )
 
-// based on members' values, select possible multi select filter options
+// based on members' values, generate possible multi select filter options
 const setMultiSelectValues = (members) => {
   members.forEach((member) => {
     _.each(MULTI_SELECT_CONFIG, ({ key, options }) => {
@@ -41,11 +63,11 @@ const setMultiSelectValues = (members) => {
     })
   })
 
-  MULTI_SELECT_CONFIG.forEach(({ options, key }, idx) => {
+  MULTI_SELECT_CONFIG.forEach(({ options, nameMap }, idx) => {
     MULTI_SELECT_CONFIG[idx].options = _.chain(options)
       .uniq()
-      .sort((a, b) => a.toLowerCase() > b.toLowerCase())
-      .map((o) => ({ label: o, value: o }))
+      .map((o) => ({ label: nameMap[o], value: o }))
+      .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase())
       .value()
   })
 }
@@ -61,49 +83,70 @@ function App() {
   const unselectMemberHandler = () => setSelectedMember(null)
 
   useEffect(() => {
-    console.log("FETCHING MEMBER DATA")
-    fetch(
-      // read-only key
-      "https://api.airtable.com/v0/appElHJfSTDnbbrr7/Gallery?api_key=keyFRBqnIvAd1gkXG"
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        const allMemberMap = {}
-        const allMembers = data.records
-          .filter((m) => m.fields.Latitude && m.fields.Longitude) // only located members
-          .sort((m1, m2) => m2.fields.Latitude - m1.fields.Latitude) // so pins overlap correctly
-          .map((r, index) => {
-            const memObj = { index }
-            allMemberMap[index] = true // all members start out visible
 
-            Object.keys(r.fields).forEach((field) => {
-              const val = r.fields[field]
-              const nicknameMatch = field.match(regexpNickname)
+    // get multi select base data first, so we have nameMaps before setMultiSelectValues
+    Promise.all(
+      MULTI_SELECT_CONFIG.map(
+        ({ title, nameMap, tableName, fieldName }) => {
+          return fetch(getApiLink(tableName))
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("FETCH ", title)
+              data.records.forEach((r) => (nameMap[r.id] = r.fields[fieldName]))
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+        }
+      )
+    ).then(() => {
+      console.log("FETCH MEMBER DATA")
+      fetch(getApiLink("members"))
+        .then((response) => response.json())
+        .then((data) => {
+          const allMemberMap = {}
+          const allMembers = data.records
+            .filter((m) => m.fields.Latitude && m.fields.Longitude) // only located members
+            .sort((m1, m2) => m2.fields.Latitude - m1.fields.Latitude) // so pins overlap correctly
+            .map((r, index) => {
+              const memObj = { index }
+              allMemberMap[index] = true // all members start out visible
 
-              if (nicknameMatch && nicknameMatch[0]) {
-                const nickname = nicknameMatch[0]
-                memObj[nickname] = val
-              } else {
-                const standardizedField = field
-                  .toLowerCase()
-                  .replaceAll(" ", "_")
-                memObj[standardizedField] = val
-              }
+              Object.keys(r.fields).forEach((field) => {
+                const val = r.fields[field]
+                const nicknameMatch = field.match(regexpNickname)
+
+                if (nicknameMatch && nicknameMatch[0]) {
+                  const nickname = nicknameMatch[0]
+                  memObj[nickname] = val
+                } else {
+                  const standardizedField = field
+                    .toLowerCase()
+                    .replaceAll("-", " ")
+                    .replaceAll(/\s+/g, "_")
+                  memObj[standardizedField] = val
+                }
+              })
+
+              const leads = _.get(memObj, "project_lead", [])
+              const consults = _.get(memObj, "project_consultant", [])
+              memObj.projects = _.uniq([...leads, ...consults])
+              return memObj
             })
 
-            return memObj
-          })
-
-        setMultiSelectValues(allMembers)
-        setAllMembers(allMembers)
-      })
+          setMultiSelectValues(allMembers)
+          setAllMembers(allMembers)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    })              
   }, [])
 
   const setVisible = () => {
     const visibleMap = allMembers.reduce((visMap, member) => {
+
       const visible = _.every(selectedOptionsMap, (selectedValues, field) => {
-        // console.log("field, selectedValues: ");
-        // console.log(field, selectedValues);
         return selectedValues.every(
           ({ value }) => member[field] && member[field].includes(value)
         )
@@ -136,6 +179,8 @@ function App() {
       <MemberDetails
         selectedMember={selectedMember}
         unselectMemberHandler={unselectMemberHandler}
+        selectedOptionsMap={selectedOptionsMap}
+        MULTI_SELECT_CONFIG={MULTI_SELECT_CONFIG}
       />
       <ReactTooltip>{tooltipContent}</ReactTooltip>
       <MapChart

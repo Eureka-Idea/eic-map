@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@material-ui/core"
 import _ from "lodash"
+import clsx from "clsx"
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -31,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
     minWidth: "220px",
     // fontSize: ".75rem",
   },
+  bodyDetails: {
+    paddingBottom: theme.spacing(2),
+  },
   name: {
     fontSize: "1.5rem",
     fontVariant: "petite-caps",
@@ -51,12 +55,16 @@ const useStyles = makeStyles((theme) => ({
   },
   detailValue: {
     fontSize: ".75rem",
+    display: "inline",
+  },
+  selectedAttribute: {
+    fontWeight: "700",
   },
   profileLink: {
     fontSize: ".75rem",
     fontFamily: "monospace",
     display: "inline-block",
-    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
     color: "#0858c0",
   },
   headshot: {
@@ -74,16 +82,60 @@ const introDetails = [
   // { key: "online_profile_link", title: "website", link: true },
 ]
 
-const bodyDetails = [
-  { key: "focus_area_multi", title: "Focus Area" },
-  { key: "core_skills_multi", title: "Core Skills" },
-  { key: "projects", title: "Projects" },
-]
+// const bodyDetails = [
+//   { key: "focus_area", title: "Focus Area" },
+//   { key: "core_skills", title: "Core Skills" },
+//   { key: "projects", title: "Projects" },
+// ]
 
-const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
+const MemberDetails = ({
+  selectedMember,
+  unselectMemberHandler,
+  selectedOptionsMap,
+  MULTI_SELECT_CONFIG,
+  PROJECT_NAME_MAP,
+  SKILL_NAME_MAP,
+  FIELD_NAME_MAP,
+}) => {
   // const isMemberSelected = !!selectedMember;
   const classes = useStyles()
   if (!selectedMember) return null
+
+  const getAttributes = (key, nameMap) => {
+    const attributes = _.get(selectedMember, key, [])
+    if (!attributes.length) {
+      return (
+        <Typography className={classes.detailValue} variant="body1">
+          N/A
+        </Typography>
+      )
+    }
+
+    const processedAttributes = _.chain(attributes)
+      .map((attr) => ({
+        value: attr,
+        label: _.get(nameMap, attr),
+        selected: _.some(selectedOptionsMap[key], (o) => o.value === attr),
+      }))
+      .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase())
+      .value()
+    
+    return (
+      <>
+        {processedAttributes.map(({ label, selected }, idx) => {
+          const classNames = clsx(classes.detailValue, {
+            [classes.selectedAttribute]: selected,
+          })
+          return (
+            <Typography className={classNames} variant="body1">
+              {label}
+              {idx !== attributes.length - 1 ? ", " : ""}
+            </Typography>
+          )
+        })}
+      </>
+    )
+  }
 
   const picUrl = _.get(selectedMember, "profile_pic.0.url")
   const profileLink = _.get(selectedMember, "online_profile_link")
@@ -107,13 +159,13 @@ const MemberDetails = ({ selectedMember, unselectMemberHandler }) => {
       </div>
 
       <div className={classes.bodyDetails}>
-        {bodyDetails.map(({ key, title }) => (
+        {MULTI_SELECT_CONFIG.map(({ key, title, nameMap }) => (
           <>
             <Typography className={classes.detailTitle} variant="subtitle1">
               {title}
             </Typography>
             <Typography className={classes.detailValue} variant="body1">
-              {_.get(selectedMember, key, ["N/A"]).join(", ")}
+              {getAttributes(key, nameMap)}
             </Typography>
           </>
         ))}
