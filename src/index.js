@@ -53,6 +53,9 @@ const MULTI_SELECT_CONFIG = [
     fieldName: "Project Name",
   },
 ]
+
+let COUNTRIES = []
+
 const multiStateMap = _.reduce(
   MULTI_SELECT_CONFIG,
   (accum, next) => {
@@ -78,6 +81,13 @@ const setMultiSelectValues = (members) => {
       .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase())
       .value()
   })
+
+  COUNTRIES = _.chain(members)
+    .map("country")
+    .uniq()
+    .sort((a, b) => a.toLowerCase() > b.toLowerCase())
+    .map((c) => ({ label: c, value: c }))
+    .value()
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -95,6 +105,7 @@ function App() {
 
   const [tooltipContent, setTooltipContent] = useState("")
   const [selectedOptionsMap, setSelectedOptionsMap] = useState(multiStateMap)
+  const [selectedCountries, setSelectedCountries] = useState([])
 
   const [selectedMember, setSelectedMember] = useState(null)
   const unselectMemberHandler = () => setSelectedMember(null)
@@ -166,8 +177,14 @@ function App() {
   }, [])
 
   const setVisible = () => {
+
+    const countriesSelected = selectedCountries.length
+    
     const visibleMap = allMembers.reduce((visMap, member) => {
       const visible = _.every(selectedOptionsMap, (selectedValues, field) => {
+        if (countriesSelected && !selectedCountries.includes(member.country)) {
+          return false
+        }
         return selectedValues.every(
           ({ value }) => member[field] && member[field].includes(value)
         )
@@ -181,13 +198,19 @@ function App() {
     setVisibleMemberMap(visibleMap)
   }
   const debouncedSetVisible = _.debounce(setVisible, 500)
-  useEffect(debouncedSetVisible, [selectedOptionsMap, allMembers])
+  
+  // update the visibleMemberMap if filters change
+  useEffect(debouncedSetVisible, [selectedOptionsMap, selectedCountries, allMembers])
 
   const handleSelectOptions = (key, selected) => {
     const newState = _.cloneDeep(selectedOptionsMap)
     _.set(newState, key, selected)
 
     setSelectedOptionsMap(newState)
+  }
+
+  const handleSelectCountries = (selected) => {
+    setSelectedCountries(_.map(selected, "value"))
   }
 
   const classes = useStyles()
@@ -201,9 +224,11 @@ function App() {
         multiSelectConfig={MULTI_SELECT_CONFIG}
         selectedOptionsMap={selectedOptionsMap}
         handleSelectOptions={handleSelectOptions}
+        handleSelectCountries={handleSelectCountries}
         panelOpen={panelOpen}
         togglePanelOpen={togglePanelOpen}
-      />
+        countries={COUNTRIES}
+        />
       <MemberDetails
         selectedMember={selectedMember}
         unselectMemberHandler={unselectMemberHandler}

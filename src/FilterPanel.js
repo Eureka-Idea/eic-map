@@ -59,9 +59,11 @@ const useStyles = makeStyles((theme) => ({
 const FilterPanel = ({
   multiSelectConfig,
   handleSelectOptions,
+  handleSelectCountries,
   selectedOptionsMap,
   togglePanelOpen,
   panelOpen,
+  countries,
 }) => {
 
   const classes = useStyles()
@@ -79,7 +81,7 @@ const FilterPanel = ({
       </ButtonGroup>
       <div className={classes.content}>
         <Typography className={classes.header} variant="body1">
-          Filter to members fitting <em>all</em> of the following criteria
+          Filter to members who fit <em>all</em> of the following criteria
         </Typography>
         {multiSelectConfig.map(({ title, options, key }) => (
           <div key={key} className={classes.selectWrapper}>
@@ -98,6 +100,19 @@ const FilterPanel = ({
             />
           </div>
         ))}
+        <Typography className={classes.header} variant="body1">
+          and reside in one of the following countries
+        </Typography>
+        <Select
+          className={classes.multiSelect}
+          placeholder="Any"
+          id="country-select"
+          isMulti
+          closeMenuOnSelect={false}
+          defaultValue={null}
+          onChange={handleSelectCountries}
+          options={countries}
+        />
       </div>
     </Drawer>
   )

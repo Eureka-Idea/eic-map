@@ -122,7 +122,7 @@ const MapChart = ({
     .value()
 
   const classes = useStyles()
-    
+  
   return (
     <div className={classes.root}>
       <ComposableMap data-tip="">
