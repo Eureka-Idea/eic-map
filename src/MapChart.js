@@ -28,6 +28,8 @@ const useStyles = makeStyles((theme) => ({
   root: {
     zIndex: -1,
     position: "absolute",
+    height: "100vh",
+    width: "100vw",
   },
 }))
 
@@ -91,7 +93,7 @@ const MapChart = ({
                   stroke={PIN_STROKE}
                   strokeOpacity={PIN_STROKE_OPACITY}
                   strokeWidth={PIN_HEAD_STROKE_WIDTH}
-                  fill={PIN_COLORS[i]}
+                  fill={PIN_COLORS[i % (PIN_COLORS.length - 1)]}
                   fillOpacity={PIN_FILL_OPACITY}
                 />
                 <circle

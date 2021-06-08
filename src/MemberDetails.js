@@ -157,14 +157,12 @@ const MemberDetails = ({
 
       <div className={classes.bodyDetails}>
         {MULTI_SELECT_CONFIG.map(({ key, title, nameMap }) => (
-          <>
+          <div key={key}>
             <Typography className={classes.detailTitle} variant="subtitle1">
               {title}
             </Typography>
-            <Typography className={classes.detailValue} variant="body1">
-              {getAttributes(key, nameMap)}
-            </Typography>
-          </>
+            {getAttributes(key, nameMap)}
+          </div>
         ))}
       </div>
 
