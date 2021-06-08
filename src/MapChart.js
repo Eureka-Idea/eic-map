@@ -22,6 +22,14 @@ import {
   getTransform,
 } from "./consts"
 import _ from "lodash"
+import { makeStyles } from "@material-ui/core"
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    zIndex: -1,
+    position: "absolute",
+  },
+}))
 
 const MapChart = ({
   allMembers,
@@ -111,8 +119,10 @@ const MapChart = ({
     .map((index) => MarkerMap[index])
     .value()
 
+  const classes = useStyles()
+    
   return (
-    <>
+    <div className={classes.root}>
       <ComposableMap data-tip="">
         <defs>
           <radialGradient
@@ -178,7 +188,7 @@ const MapChart = ({
           );
         })}
       </div> */}
-    </>
+    </div>
   )
 }
 

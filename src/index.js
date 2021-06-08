@@ -9,6 +9,14 @@ import MemberDetails from "./MemberDetails"
 import _ from "lodash"
 import FilterPanel from "./FilterPanel"
 import { getApiLink } from "./consts"
+import {
+  Icon,
+  IconButton,
+  makeStyles,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core"
+import { FilterList } from "@material-ui/icons"
 
 // format of col nicknames
 const regexpNickname = /(col_\w+)/
@@ -72,6 +80,15 @@ const setMultiSelectValues = (members) => {
   })
 }
 
+const useStyles = makeStyles((theme) => ({
+  app: {},
+  filterButton: {
+    position: "absolute",
+    top: theme.spacing(1),
+    right: theme.spacing(1),
+  },
+}))
+
 function App() {
   const [visibleMemberMap, setVisibleMemberMap] = useState({})
   const [allMembers, setAllMembers] = useState([])
@@ -81,26 +98,27 @@ function App() {
 
   const [selectedMember, setSelectedMember] = useState(null)
   const unselectMemberHandler = () => setSelectedMember(null)
-  
+
   const [panelOpen, setPanelOpen] = useState(false)
+  const togglePanelOpen = () => setPanelOpen(!panelOpen)
+
+  const theme = useTheme()
+  const bigEnough = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true })
 
   useEffect(() => {
-
     // get multi select base data first, so we have nameMaps before setMultiSelectValues
     Promise.all(
-      MULTI_SELECT_CONFIG.map(
-        ({ title, nameMap, tableName, fieldName }) => {
-          return fetch(getApiLink(tableName))
-            .then((response) => response.json())
-            .then((data) => {
-              console.log("FETCH ", title)
-              data.records.forEach((r) => (nameMap[r.id] = r.fields[fieldName]))
-            })
-            .catch((error) => {
-              console.error(error)
-            })
-        }
-      )
+      MULTI_SELECT_CONFIG.map(({ title, nameMap, tableName, fieldName }) => {
+        return fetch(getApiLink(tableName))
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("FETCH ", title)
+            data.records.forEach((r) => (nameMap[r.id] = r.fields[fieldName]))
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      })
     ).then(() => {
       console.log("FETCH MEMBER DATA")
       fetch(getApiLink("members"))
@@ -138,17 +156,17 @@ function App() {
 
           setMultiSelectValues(allMembers)
           setAllMembers(allMembers)
-          setPanelOpen(true)
+
+          if (bigEnough) setPanelOpen(true)
         })
         .catch((error) => {
           console.error(error)
         })
-    })              
+    })
   }, [])
 
   const setVisible = () => {
     const visibleMap = allMembers.reduce((visMap, member) => {
-
       const visible = _.every(selectedOptionsMap, (selectedValues, field) => {
         return selectedValues.every(
           ({ value }) => member[field] && member[field].includes(value)
@@ -172,14 +190,19 @@ function App() {
     setSelectedOptionsMap(newState)
   }
 
+  const classes = useStyles()
+
   return (
-    <div>
+    <div classes={classes.app}>
+      <IconButton onClick={togglePanelOpen} className={classes.filterButton}>
+        <FilterList />
+      </IconButton>
       <FilterPanel
         multiSelectConfig={MULTI_SELECT_CONFIG}
         selectedOptionsMap={selectedOptionsMap}
         handleSelectOptions={handleSelectOptions}
         panelOpen={panelOpen}
-        setPanelOpen={setPanelOpen}
+        togglePanelOpen={togglePanelOpen}
       />
       <MemberDetails
         selectedMember={selectedMember}
