@@ -34,12 +34,12 @@ export const PIN_FILL_OPACITY = 1
 export const PIN_GRAD_OPACITY = 0.3
 export const PIN_STROKE_OPACITY = 1
 export const PIN_STROKE = "#555"
-export const PIN_SHAFT_WIDTH = 1.6
+export const PIN_SHAFT_WIDTH = 1.2
 export const PIN_HEAD_STROKE_WIDTH = 0
 // export const PIN_SHAFT_STROKE_WIDTH = 0.2;
 
-export const PIN_WIDTH = 8
-export const PIN_HEIGHT = 16
+export const PIN_WIDTH = 7
+export const PIN_HEIGHT = 10
 export const PIN_HEAD_SCALE = 1
 
 const degToRad = (d) => (d * Math.PI) / 180
@@ -48,25 +48,27 @@ const getRandom = (spread) => spread * (Math.random() - 0.5)
 
 // default tilt
 export const ROTATION_DEFAULT = degToRad(13)
+// radians assigned per unit of col_rotation assigned in sheet
+export const ROTATION_MAGNITUDE = (2 * Math.PI) / 7
 // range of added randomness
-export const RANDOMNESS_SPREAD = degToRad(10)
-// radians per multiple
-export const ROTATION_MAGNITUDE = (2 * Math.PI) / 9
+export const RANDOMN_ROTATIONAL_SPREAD = degToRad(10)
+export const RANDOM_SHIFT_FACTOR = 0.05
 
 export const getTransform = (rotationMultiple) => {
   let pinRotation = ROTATION_DEFAULT
-  // slight random lean for realism
-  pinRotation += getRandom(RANDOMNESS_SPREAD)
+  // slight random rotational variance for realism
+  pinRotation += getRandom(RANDOMN_ROTATIONAL_SPREAD)
   pinRotation += rotationMultiple * ROTATION_MAGNITUDE
 
   const transX =
     // slight random offset for realism
-    getRandom((PIN_WIDTH + PIN_HEIGHT) / 20) +
+    // ((PIN_WIDTH + PIN_HEIGHT) * RANDOM_SHIFT_FACTOR * rotationMultiple) +
+    getRandom((PIN_WIDTH + PIN_HEIGHT) * RANDOM_SHIFT_FACTOR) +
     Math.sin(pinRotation) * PIN_HEIGHT -
     (Math.cos(pinRotation) * PIN_WIDTH) / 2
   const transY =
     // slight random offset for realism
-    getRandom((PIN_WIDTH + PIN_HEIGHT) / 20) -
+    getRandom((PIN_WIDTH + PIN_HEIGHT) * RANDOM_SHIFT_FACTOR) -
     Math.cos(pinRotation) * PIN_HEIGHT -
     (Math.sin(pinRotation) * PIN_WIDTH) / 2
 
