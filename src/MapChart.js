@@ -30,11 +30,17 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     height: "100vh",
     width: "100vw",
+    // color the ocean (better way?)
+    "& svg > g > rect": {
+      fill: "#eef3f9",
+      // fill: "#5a87c11a",
+    },
   },
 }))
 
 const MapChart = ({
   allMembers,
+  selectedCountries,
   visibleMemberMap,
   setTooltipContent,
   setSelectedMember,
@@ -122,7 +128,7 @@ const MapChart = ({
     .value()
 
   const classes = useStyles()
-  
+
   return (
     <div className={classes.root}>
       <ComposableMap data-tip="">
@@ -150,22 +156,26 @@ const MapChart = ({
             <stop offset="100%" stopOpacity="1" stopColor="#777" />
           </linearGradient>
         </defs>
-        <ZoomableGroup zoom={1}>
+        <ZoomableGroup zoom={1} center={[19, 0]}>
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
               geographies.map((geo) => (
                 <Geography
-                  fill={colors.secondary}
+                  fill={
+                    selectedCountries.includes(geo.properties.NAME)
+                      ? colors.primary
+                      : colors.secondary
+                  }
                   stroke={colors.outline}
                   strokeWidth=".1"
                   key={geo.rsmKey}
                   geography={geo}
                   onMouseEnter={(e) => {
-                    e.target.setAttribute("fill", colors.primary)
+                    // e.target.setAttribute("fill", colors.primary)
                     setTooltipContent(geo.properties.NAME)
                   }}
                   onMouseLeave={(e) => {
-                    e.target.setAttribute("fill", colors.secondary)
+                    // e.target.setAttribute("fill", colors.secondary)/
                     setTooltipContent("")
                   }}
                 />

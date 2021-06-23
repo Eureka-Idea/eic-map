@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     maxWidth: 500,
     maxHeight: "85vh",
-    overflowY: "scroll",
+    overflowY: "auto",
     backgroundColor: "#e8f2ff",
     // backgroundColor: theme.palette.background.paper,
     border: "1px solid #000",

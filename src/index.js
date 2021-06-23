@@ -228,7 +228,7 @@ function App() {
         panelOpen={panelOpen}
         togglePanelOpen={togglePanelOpen}
         countries={COUNTRIES}
-        />
+      />
       <MemberDetails
         selectedMember={selectedMember}
         unselectMemberHandler={unselectMemberHandler}
@@ -238,6 +238,7 @@ function App() {
       <ReactTooltip>{tooltipContent}</ReactTooltip>
       <MapChart
         allMembers={allMembers}
+        selectedCountries={selectedCountries}
         visibleMemberMap={visibleMemberMap}
         setSelectedMember={setSelectedMember}
         setTooltipContent={setTooltipContent}

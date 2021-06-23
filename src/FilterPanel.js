@@ -13,20 +13,29 @@ import { Close } from "@material-ui/icons"
 const useStyles = makeStyles((theme) => ({
   paper: {
     width: "100vw",
-    backgroundColor: "#e6e3d7",
+    backgroundColor: "#e6e3d7", //#e2dfc9
     boxShadow: theme.shadows[5],
     [theme.breakpoints.up(500)]: {
       width: "254px",
     },
+    [theme.breakpoints.up("sm")]: {
+      width: "300px",
+    },
     [theme.breakpoints.up("md")]: {
-      width: "320px",
+      width: "360px",
       "& $content": {
         padding: theme.spacing(3, 4),
       },
     },
+    [theme.breakpoints.up("lg")]: {
+      width: "420px",
+    },
+    [theme.breakpoints.up("xl")]: {
+      width: "480px",
+    },
   },
   content: {
-    overflowY: "scroll",
+    overflowY: "auto",
     height: "100%",
     width: "100%",
     padding: theme.spacing(2),
@@ -37,9 +46,11 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: 1.25,
     paddingRight: theme.spacing(4), // room for X
     paddingTop: theme.spacing(1), // room for X
+    paddingBottom: theme.spacing(1),
   },
   multiSelect: {
     fontSize: ".75rem",
+    paddingBottom: theme.spacing(1),
   },
   detailTitle: {
     fontSize: ".6rem",
@@ -47,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: 1.5,
     fontFamily: "monospace",
     textTransform: "uppercase",
-    paddingTop: theme.spacing(1),
+    // paddingTop: theme.spacing(1),
   },
   toggleButton: {
     position: "absolute",
@@ -93,7 +104,7 @@ const FilterPanel = ({
               placeholder="Any"
               id={key}
               isMulti
-              closeMenuOnSelect={false}
+              closeMenuOnSelect={true}
               defaultValue={null}
               onChange={handleSelectOptions.bind(this, key)}
               options={options}
@@ -108,7 +119,7 @@ const FilterPanel = ({
           placeholder="Any"
           id="country-select"
           isMulti
-          closeMenuOnSelect={false}
+          closeMenuOnSelect={true}
           defaultValue={null}
           onChange={handleSelectCountries}
           options={countries}
