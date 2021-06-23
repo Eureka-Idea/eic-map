@@ -119,7 +119,7 @@ const FilterPanel = ({
           placeholder="Any"
           id="country-select"
           isMulti
-          closeMenuOnSelect={true}
+          closeMenuOnSelect={false}
           defaultValue={null}
           onChange={handleSelectCountries}
           options={countries}
