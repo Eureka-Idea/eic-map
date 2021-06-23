@@ -17,6 +17,7 @@ import {
   useTheme,
 } from "@material-ui/core"
 import { FilterList } from "@material-ui/icons"
+import clsx from "clsx"
 
 // format of col nicknames
 const regexpNickname = /(col_\w+)/
@@ -96,6 +97,9 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: theme.spacing(1),
     right: theme.spacing(1),
+    "&.filterActive svg": {
+      fill: "#ff8f00",
+    },
   },
 }))
 
@@ -106,6 +110,9 @@ function App() {
   const [tooltipContent, setTooltipContent] = useState("")
   const [selectedOptionsMap, setSelectedOptionsMap] = useState(multiStateMap)
   const [selectedCountries, setSelectedCountries] = useState([])
+  const filterActive =
+    selectedCountries.length ||
+    _.some(selectedOptionsMap, (values) => !!values.length)
 
   const [selectedMember, setSelectedMember] = useState(null)
   const unselectMemberHandler = () => setSelectedMember(null)
@@ -214,10 +221,11 @@ function App() {
   }
 
   const classes = useStyles()
+  const filtersIconClasses = clsx(classes.filterButton, { filterActive })
 
   return (
     <div classes={classes.app}>
-      <IconButton onClick={togglePanelOpen} className={classes.filterButton}>
+      <IconButton onClick={togglePanelOpen} className={filtersIconClasses}>
         <FilterList />
       </IconButton>
       <FilterPanel
