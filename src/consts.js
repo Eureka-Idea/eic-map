@@ -13,9 +13,13 @@ export const MODE_DATA = {
   consultants: {
     headerText: "EIC Consultants",
     colors: {
-      primary: "#d7d3a0",
+      primary: "#edeac9",
+      // primary: "#d7d3a0",
+      // primary: "#b89fd3ee", EIC purple
       // primary: "#1b63c188",
-      secondary: "#f4f2d1",
+      secondary: "#f5f4dc",
+      // secondary: "#f4f2d1",
+      // secondary: "#b89fd3aa", EIC purple
       // secondary: "#5a87c144",
       outline: "#6d2e00bd",
       // primary: "#1b63c1e3",

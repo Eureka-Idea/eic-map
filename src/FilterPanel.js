@@ -13,6 +13,7 @@ import { Close } from "@material-ui/icons"
 const useStyles = makeStyles((theme) => ({
   paper: {
     width: "100vw",
+    height: "75vw", // map aspect ratio 4:3
     backgroundColor: "#e6e3d7", //#e2dfc9
     boxShadow: theme.shadows[5],
     [theme.breakpoints.up(500)]: {
