@@ -35,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
       fill: "#eef3f9",
       // fill: "#5a87c11a",
     },
+    "& svg, & path": {
+      outline: "none",
+    },
   },
 }))
 
