@@ -22,9 +22,28 @@ import {
   getTransform,
 } from "./consts"
 import _ from "lodash"
-import { makeStyles } from "@material-ui/core"
+import { makeStyles, Paper, Typography } from "@material-ui/core"
+import clsx from "clsx"
 
 const useStyles = makeStyles((theme) => ({
+  dismissed: {},
+  dragHint: {
+    background: "#f5f3ec",
+    position: "absolute",
+    "& .MuiTypography-body1": {
+      // fontSize: ".75rem",
+      // lineHeight: 1.25,
+    },
+    top: theme.spacing(4),
+    left: theme.spacing(4),
+    padding: theme.spacing(2),
+    boxShadow: theme.shadows[3],
+    textAlign: "center",
+    "&$dismissed": {
+      left: -400,
+      transition: "left 1000ms",
+    },
+  },
   root: {
     zIndex: -1,
     position: "absolute",
@@ -35,7 +54,8 @@ const useStyles = makeStyles((theme) => ({
       fill: "#eef3f9",
       // fill: "#5a87c11a",
     },
-    "& svg, & path": {
+    // prevents svg, path, g elements from getting blue selected rectangle
+    "& *": {
       outline: "none",
     },
   },
@@ -132,9 +152,28 @@ const MapChart = ({
 
   const classes = useStyles()
 
+  const [dragHintDismissed, setDragHintDismissed] = useState(false)
+  const dismissDragHint = () => setDragHintDismissed(true)
+  // auto dismiss after 20 seconds
+  const setDismissTimer = () => setTimeout(dismissDragHint, 20 * 1000)
+
   return (
     <div className={classes.root}>
-      <ComposableMap data-tip="">
+      <Paper
+        className={clsx(classes.dragHint, {
+          [classes.dismissed]: dragHintDismissed,
+        })}
+      >
+        <Typography variant="body1">Drag map to move</Typography>
+        <Typography variant="body1">Scroll to zoom</Typography>
+      </Paper>
+      <ComposableMap
+        data-tip=""
+        onMouseOver={setDismissTimer}
+        onClick={dismissDragHint}
+        onWheel={dismissDragHint}
+        onDragStart={dismissDragHint}
+      >
         <defs>
           <radialGradient
             id="head-reflection"
@@ -159,7 +198,8 @@ const MapChart = ({
             <stop offset="100%" stopOpacity="1" stopColor="#777" />
           </linearGradient>
         </defs>
-        <ZoomableGroup zoom={1} center={[19, 0]}>
+        {/* NOTE second data-tip prevents tooltip location from getting misplaced after click */}
+        <ZoomableGroup data-tip="" zoom={1} center={[19, 0]}>
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
               geographies.map((geo) => (
@@ -173,6 +213,7 @@ const MapChart = ({
                   strokeWidth=".1"
                   key={geo.rsmKey}
                   geography={geo}
+                  onClick={dismissDragHint}
                   onMouseEnter={(e) => {
                     // e.target.setAttribute("fill", colors.primary)
                     setTooltipContent(geo.properties.NAME)
