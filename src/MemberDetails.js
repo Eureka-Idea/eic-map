@@ -1,6 +1,8 @@
 import React from "react"
 import {
   Backdrop,
+  ButtonGroup,
+  IconButton,
   Link,
   makeStyles,
   Modal,
@@ -8,6 +10,7 @@ import {
 } from "@material-ui/core"
 import _ from "lodash"
 import clsx from "clsx"
+import { Close } from "@material-ui/icons"
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -26,6 +29,12 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(3, 4),
     margin: theme.spacing(2),
+  },
+  closeButton: {
+    zIndex: 1,
+    position: "absolute",
+    top: theme.spacing(1),
+    right: theme.spacing(1),
   },
   introDetails: {
     display: "inline-block",
@@ -138,6 +147,11 @@ const MemberDetails = ({
   const profileLink = _.get(selectedMember, "online_profile_link")
   const body = (
     <div className={classes.paper}>
+      <ButtonGroup className={classes.closeButton}>
+        <IconButton onClick={unselectMemberHandler}>
+          <Close />
+        </IconButton>
+      </ButtonGroup>
       <div className={classes.introDetails}>
         <Typography className={classes.name} variant="h2">
           {selectedMember.name}

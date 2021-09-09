@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
     height: "75vw", // map aspect ratio 4:3
     backgroundColor: "#e6e3d7", //#e2dfc9
     boxShadow: theme.shadows[5],
+    // boxShadow: -3px ​0px 8px rgba(0, 0, 0, 0.05),
     [theme.breakpoints.up(500)]: {
       width: "254px",
     },
@@ -62,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
     // paddingTop: theme.spacing(1),
   },
   toggleButton: {
+    zIndex: 1,
     position: "absolute",
     top: theme.spacing(1),
     right: theme.spacing(1),
@@ -86,7 +88,7 @@ const FilterPanel = ({
       variant="persistent"
       anchor="right"
     >
-      <ButtonGroup className={classes.toggleButton} onClick={togglePanelOpen}>
+      <ButtonGroup className={classes.toggleButton}>
         <IconButton onClick={togglePanelOpen}>
           <Close />
         </IconButton>
