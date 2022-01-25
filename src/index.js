@@ -85,8 +85,7 @@ const setMultiSelectValues = (members) => {
         !keep && console.warn("Discarding labelless option: ", o)
         return keep
       })
-      // TODO: not sorting properly
-      .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase())
+      .sort((a, b) => (a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1))
       .value()
   })
 
