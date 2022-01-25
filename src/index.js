@@ -79,6 +79,13 @@ const setMultiSelectValues = (members) => {
     MULTI_SELECT_CONFIG[idx].options = _.chain(options)
       .uniq()
       .map((o) => ({ label: nameMap[o], value: o }))
+      .filter((o) => {
+        const keep = !!o.label
+        // TODO: figure out where these are coming from
+        !keep && console.warn("Discarding labelless option: ", o)
+        return keep
+      })
+      // TODO: not sorting properly
       .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase())
       .value()
   })
@@ -131,6 +138,7 @@ function App() {
           .then((response) => response.json())
           .then((data) => {
             console.log("FETCH ", title)
+            console.log(data.records)
             data.records.forEach((r) => (nameMap[r.id] = r.fields[fieldName]))
           })
           .catch((error) => {
@@ -184,9 +192,8 @@ function App() {
   }, [])
 
   const setVisible = () => {
-
     const countriesSelected = selectedCountries.length
-    
+
     const visibleMap = allMembers.reduce((visMap, member) => {
       const visible = _.every(selectedOptionsMap, (selectedValues, field) => {
         if (countriesSelected && !selectedCountries.includes(member.country)) {
@@ -205,9 +212,13 @@ function App() {
     setVisibleMemberMap(visibleMap)
   }
   const debouncedSetVisible = _.debounce(setVisible, 500)
-  
+
   // update the visibleMemberMap if filters change
-  useEffect(debouncedSetVisible, [selectedOptionsMap, selectedCountries, allMembers])
+  useEffect(debouncedSetVisible, [
+    selectedOptionsMap,
+    selectedCountries,
+    allMembers,
+  ])
 
   const handleSelectOptions = (key, selected) => {
     const newState = _.cloneDeep(selectedOptionsMap)
